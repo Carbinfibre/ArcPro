@@ -1,9 +1,22 @@
 /*
-** $Id: ldebug.c,v 2.29.1.6 2008/05/08 16:56:26 roberto Exp $
-** Debug Interface
-** See Copyright Notice in lua.h
-*/
-
+ * ArcPro MMORPG Server
+ * Copyright (C) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
+ * Copyright (C) 1994-2013 Lua <http://www.lua.org>
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2 of the License, or (at your
+ * option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 
 #include <stdarg.h>
 #include <stddef.h>
@@ -487,8 +500,8 @@ int luaG_checkcode (const Proto *pt) {
 
 
 static const char *kname (Proto *p, int c) {
-  if (ISK(c) && ttisstring(&p->k[INDEXK(c)]))
-    return svalue(&p->k[INDEXK(c)]);
+  if (ISK(C) && ttisstring(&p->k[INDEXK(C)]))
+    return svalue(&p->k[INDEXK(C)]);
   else
     return "?";
 }

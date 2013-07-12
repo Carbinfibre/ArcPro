@@ -1,9 +1,22 @@
 /*
-** $Id: luaconf.h,v 1.82.1.7 2008/02/11 16:25:08 roberto Exp $
-** Configuration file for Lua
-** See Copyright Notice in lua.h
-*/
-
+ * ArcPro MMORPG Server
+ * Copyright (C) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
+ * Copyright (C) 1994-2013 Lua <http://www.lua.org>
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2 of the License, or (at your
+ * option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 
 #ifndef lconfig_h
 #define lconfig_h
@@ -608,21 +621,21 @@ union luai_Cast { double l_d; long l_l; };
 */
 #if defined(__cplusplus)
 /* C++ exceptions */
-#define LUAI_THROW(L,c)	throw(c)
+#define LUAI_THROW(L,c)	throw(C)
 #define LUAI_TRY(L,c,a)	try { a } catch(...) \
-	{ if ((c)->status == 0) (c)->status = -1; }
+	{ if ((C)->status == 0) (C)->status = -1; }
 #define luai_jmpbuf	int  /* dummy variable */
 
 #elif defined(LUA_USE_ULONGJMP)
 /* in Unix, try _longjmp/_setjmp (more efficient) */
-#define LUAI_THROW(L,c)	_longjmp((c)->b, 1)
-#define LUAI_TRY(L,c,a)	if (_setjmp((c)->b) == 0) { a }
+#define LUAI_THROW(L,c)	_longjmp((C)->b, 1)
+#define LUAI_TRY(L,c,a)	if (_setjmp((C)->b) == 0) { a }
 #define luai_jmpbuf	jmp_buf
 
 #else
 /* default handling with long jumps */
-#define LUAI_THROW(L,c)	longjmp((c)->b, 1)
-#define LUAI_TRY(L,c,a)	if (setjmp((c)->b) == 0) { a }
+#define LUAI_THROW(L,c)	longjmp((C)->b, 1)
+#define LUAI_TRY(L,c,a)	if (setjmp((C)->b) == 0) { a }
 #define luai_jmpbuf	jmp_buf
 
 #endif

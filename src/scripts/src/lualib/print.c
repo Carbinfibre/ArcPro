@@ -1,8 +1,22 @@
 /*
-** $Id: print.c,v 1.55a 2006/05/31 13:30:05 lhf Exp $
-** print bytecodes
-** See Copyright Notice in lua.h
-*/
+ * ArcPro MMORPG Server
+ * Copyright (C) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
+ * Copyright (C) 1994-2013 Lua <http://www.lua.org>
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2 of the License, or (at your
+ * option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 
 #include <ctype.h>
 #include <stdio.h>
@@ -28,7 +42,7 @@ static void PrintString(const TString* ts)
  for (i=0; i<n; i++)
  {
   int c=s[i];
-  switch (c)
+  switch (C)
   {
    case '"': printf("\\\""); break;
    case '\\': printf("\\\\"); break;
@@ -40,7 +54,7 @@ static void PrintString(const TString* ts)
    case '\t': printf("\\t"); break;
    case '\v': printf("\\v"); break;
    default:	if (isprint((unsigned char)c))
-   			putchar(c);
+   			putchar(C);
 		else
 			printf("\\%03u",(unsigned char)c);
   }
@@ -93,7 +107,7 @@ static void PrintCode(const Proto* f)
    case iABC:
     printf("%d",a);
     if (getBMode(o)!=OpArgN) printf(" %d",ISK(b) ? (-1-INDEXK(b)) : b);
-    if (getCMode(o)!=OpArgN) printf(" %d",ISK(c) ? (-1-INDEXK(c)) : c);
+    if (getCMode(o)!=OpArgN) printf(" %d",ISK(C) ? (-1-INDEXK(C)) : c);
     break;
    case iABx:
     if (getBMode(o)==OpArgK) printf("%d %d",a,-1-bx); else printf("%d %d",a,bx);
@@ -117,7 +131,7 @@ static void PrintCode(const Proto* f)
     break;
    case OP_GETTABLE:
    case OP_SELF:
-    if (ISK(c)) { printf("\t; "); PrintConstant(f,INDEXK(c)); }
+    if (ISK(C)) { printf("\t; "); PrintConstant(f,INDEXK(C)); }
     break;
    case OP_SETTABLE:
    case OP_ADD:
@@ -128,12 +142,12 @@ static void PrintCode(const Proto* f)
    case OP_EQ:
    case OP_LT:
    case OP_LE:
-    if (ISK(b) || ISK(c))
+    if (ISK(b) || ISK(C))
     {
      printf("\t; ");
      if (ISK(b)) PrintConstant(f,INDEXK(b)); else printf("-");
      printf(" ");
-     if (ISK(c)) PrintConstant(f,INDEXK(c)); else printf("-");
+     if (ISK(C)) PrintConstant(f,INDEXK(C)); else printf("-");
     }
     break;
    case OP_JMP:

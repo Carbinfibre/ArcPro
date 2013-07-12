@@ -1,8 +1,22 @@
 /*
-** $Id: llimits.h,v 1.69.1.1 2007/12/27 13:02:25 roberto Exp $
-** Limits, basic types, and some other `installation-dependent' definitions
-** See Copyright Notice in lua.h
-*/
+ * ArcPro MMORPG Server
+ * Copyright (C) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
+ * Copyright (C) 1994-2013 Lua <http://www.lua.org>
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2 of the License, or (at your
+ * option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 
 #ifndef llimits_h
 #define llimits_h
@@ -54,12 +68,12 @@ typedef LUAI_UACNUMBER l_uacNumber;
 /* internal assertions for in-house debugging */
 #ifdef lua_assert
 
-#define check_exp(c,e)		(lua_assert(c), (e))
+#define check_exp(c,e)		(lua_assert(C), (e))
 #define api_check(l,e)		lua_assert(e)
 
 #else
 
-#define lua_assert(c)		((void)0)
+#define lua_assert(C)		((void)0)
 #define check_exp(c,e)		(e)
 #define api_check		luai_apicheck
 

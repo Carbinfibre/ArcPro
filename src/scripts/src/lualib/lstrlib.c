@@ -1,9 +1,22 @@
 /*
-** $Id: lstrlib.c,v 1.132.1.4 2008/07/11 17:27:21 roberto Exp $
-** Standard library for string operations and pattern-matching
-** See Copyright Notice in lua.h
-*/
-
+ * ArcPro MMORPG Server
+ * Copyright (C) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
+ * Copyright (C) 1994-2013 Lua <http://www.lua.org>
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2 of the License, or (at your
+ * option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 
 #include <ctype.h>
 #include <stddef.h>
@@ -21,7 +34,7 @@
 
 
 /* macro to `unsign' a character */
-#define uchar(c)        ((unsigned char)(c))
+#define uchar(C)        ((unsigned char)(C))
 
 
 
@@ -129,8 +142,8 @@ static int str_char (lua_State *L) {
   luaL_buffinit(L, &b);
   for (i=1; i<=n; i++) {
     int c = luaL_checkint(L, i);
-    luaL_argcheck(L, uchar(c) == c, i, "invalid value");
-    luaL_addchar(&b, uchar(c));
+    luaL_argcheck(L, uchar(C) == c, i, "invalid value");
+    luaL_addchar(&b, uchar(C));
   }
   luaL_pushresult(&b);
   return 1;
@@ -226,15 +239,15 @@ static const char *classend (MatchState *ms, const char *p) {
 static int match_class (int c, int cl) {
   int res;
   switch (tolower(cl)) {
-    case 'a' : res = isalpha(c); break;
-    case 'c' : res = iscntrl(c); break;
-    case 'd' : res = isdigit(c); break;
-    case 'l' : res = islower(c); break;
-    case 'p' : res = ispunct(c); break;
-    case 's' : res = isspace(c); break;
-    case 'u' : res = isupper(c); break;
-    case 'w' : res = isalnum(c); break;
-    case 'x' : res = isxdigit(c); break;
+    case 'a' : res = isalpha(C); break;
+    case 'c' : res = iscntrl(C); break;
+    case 'd' : res = isdigit(C); break;
+    case 'l' : res = islower(C); break;
+    case 'p' : res = ispunct(C); break;
+    case 's' : res = isspace(C); break;
+    case 'u' : res = isupper(C); break;
+    case 'w' : res = isalnum(C); break;
+    case 'x' : res = isxdigit(C); break;
     case 'z' : res = (c == 0); break;
     default: return (cl == c);
   }
