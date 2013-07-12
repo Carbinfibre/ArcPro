@@ -1,4 +1,6 @@
 /*
+ * ArcPro MMORPG Server
+ * Copyright (C) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
  * Copyright (C) 2008-2013 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2006-2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  *
@@ -14,6 +16,7 @@
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 /* ScriptData
@@ -1250,7 +1253,7 @@ public:
 
     CreatureAI* GetAI(Creature* c) const
     {
-        return new mob_torloth_the_magnificentAI(c);
+        return new mob_torloth_the_magnificentAI(C);
     }
 
     struct mob_torloth_the_magnificentAI : public ScriptedAI
@@ -1405,7 +1408,7 @@ public:
 
     CreatureAI* GetAI(Creature* c) const
     {
-        return new npc_lord_illidan_stormrageAI(c);
+        return new npc_lord_illidan_stormrageAI(C);
     }
 
     struct npc_lord_illidan_stormrageAI : public ScriptedAI
@@ -1553,7 +1556,7 @@ public:
 
     CreatureAI* GetAI(Creature* c) const
     {
-        return new mob_illidari_spawnAI(c);
+        return new mob_illidari_spawnAI(C);
     }
 
     struct mob_illidari_spawnAI : public ScriptedAI
