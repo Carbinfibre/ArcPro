@@ -1,8 +1,8 @@
 /*
  * ArcPro MMORPG Server
- * Copyright (C) 2011-2013 <http://arcpro.sexyi.am/>
+ * Copyright (C) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
  * Copyright (C) 2005-2007 Ascent Team <http://www.ascentemu.com/>
- * Copyright (C) 2008-2012 <http://www.ArcEmu.org/>
+ * Copyright (C) 2008-2013 ArcEmu Team <http://www.arcemu.org/>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -4902,13 +4902,13 @@ void Player::RepopAtGraveyard(float ox, float oy, float oz, uint32 mapid)
 void Player::JoinedChannel(Channel* c)
 {
 	if(c != NULL)
-		m_channels.insert(c);
+		m_channels.insert(C);
 }
 
 void Player::LeftChannel(Channel* c)
 {
 	if(c != NULL)
-		m_channels.erase(c);
+		m_channels.erase(C);
 }
 
 void Player::CleanupChannels()

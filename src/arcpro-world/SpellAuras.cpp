@@ -1,8 +1,8 @@
 /*
  * ArcPro MMORPG Server
- * Copyright (C) 2011-2013 <http://arcpro.sexyi.am/>
+ * Copyright (C) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
  * Copyright (C) 2005-2007 Ascent Team <http://www.ascentemu.com/>
- * Copyright (C) 2008-2012 <http://www.ArcEmu.org/>
+ * Copyright (C) 2008-2013 ArcEmu Team <http://www.arcemu.org/>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -1416,7 +1416,7 @@ void Aura::EventUpdateOwnerAA(float r)
 		return;
 
 	Unit* ou = NULL;
-	ou = TO< Summon* >(c)->GetOwner();
+	ou = TO< Summon* >(C)->GetOwner();
 
 	if(ou == NULL)
 		return;
@@ -1698,7 +1698,7 @@ void Aura::SpellAuraPeriodicDamage(bool apply)
 						return;
 					if(c != NULL && c->IsPlayer())
 					{
-						dmg = float2int32(TO< Player* >(c)->m_casted_amount[SCHOOL_FIRE] * parentsp->EffectBasePoints[0] / 100.0f);
+						dmg = float2int32(TO< Player* >(C)->m_casted_amount[SCHOOL_FIRE] * parentsp->EffectBasePoints[0] / 100.0f);
 					}
 					else if(c != NULL)
 					{
@@ -1731,7 +1731,7 @@ void Aura::SpellAuraPeriodicDamage(bool apply)
 				multiplyer = 48;
 			if(multiplyer)
 			{
-				Player* pr = TO< Player* >(c);
+				Player* pr = TO< Player* >(C);
 				Item* it;
 				it = pr->GetItemInterface()->GetInventoryItem(EQUIPMENT_SLOT_MAINHAND);
 				if(it)
@@ -2189,7 +2189,7 @@ void Aura::EventPeriodicHeal(uint32 amount)
 		if(c->IsPlayer())
 		{
 			for(uint32 a = 0; a < 5; a++)
-				bonus += float2int32(TO< Player* >(c)->SpellHealDoneByAttribute[a][m_spellProto->School] * TO< Player* >(c)->GetStat(a));
+				bonus += float2int32(TO< Player* >(C)->SpellHealDoneByAttribute[a][m_spellProto->School] * TO< Player* >(C)->GetStat(a));
 		}
 		//Spell Coefficient
 		if(m_spellProto->OTspell_coef_override >= 0)   //In case we have forced coefficients
@@ -2526,7 +2526,7 @@ void Aura::SpellAuraModStun(bool apply)
 				{
 					// sap
 					Unit *c = GetUnitCaster();
-					if(c)
+					if(C)
 						c->RemoveAurasByInterruptFlag(AURA_INTERRUPT_ON_START_ATTACK);  // remove stealth
 				}break;
 			case 1776:
@@ -3954,7 +3954,7 @@ void Aura::SpellAuraModSchoolImmunity(bool apply)
 	{
 		//fix me may be negative
 		Unit* c = GetUnitCaster();
-		if(c)
+		if(C)
 		{
 			if(isAttackable(c, m_target))
 				SetNegative();
@@ -5681,7 +5681,7 @@ void Aura::SpellAuraPeriodicDamagePercent(bool apply)
 		//if(gr)
 		//{
 		//	Unit*c=GetUnitCaster();
-		//	if(c)
+		//	if(C)
 		//	{
 		//		SM_FIValue(c->SM_FDOT,(int32*)&dmg,gr);
 		//		SM_PIValue(c->SM_PDOT,(int32*)&dmg,gr);
@@ -5721,7 +5721,7 @@ void Aura::EventPeriodicDamagePercent(uint32 amount)
 		damage = m_target->DoDamageSplitTarget(damage, GetSpellProto()->School, false);
 	}
 
-	if(c)
+	if(C)
 		c->SpellNonMeleeDamageLog(m_target, GetSpellProto()->Id, damage, pSpellId == 0, true);
 	else
 		m_target->SpellNonMeleeDamageLog(m_target, GetSpellProto()->Id, damage, pSpellId == 0, true);

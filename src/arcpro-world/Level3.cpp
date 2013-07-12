@@ -1,8 +1,8 @@
 /*
  * ArcPro MMORPG Server
- * Copyright (C) 2011-2013 <http://arcpro.sexyi.am/>
+ * Copyright (C) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
  * Copyright (C) 2005-2007 Ascent Team <http://www.ascentemu.com/>
- * Copyright (C) 2008-2012 <http://www.ArcEmu.org/>
+ * Copyright (C) 2008-2013 ArcEmu Team <http://www.arcemu.org/>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -342,7 +342,7 @@ bool ChatHandler::HandleLearnCommand(const char* args, WorldSession* m_session)
 		};
 
 		uint32 r = plr->getRace();
-		switch(c)
+		switch(C)
 		{
 			case PALADIN:
 				for(uint32 i = 0; paladinspellarray[r][i] != 0; ++i)

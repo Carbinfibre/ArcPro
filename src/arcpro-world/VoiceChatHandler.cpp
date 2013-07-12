@@ -1,9 +1,10 @@
 /*
  * ArcPro MMORPG Server
- * Copyright (C) 2011-2013 <http://arcpro.sexyi.am/>
- * Voice Chat Engine
+ * Copyright (C) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
+ * Copyright (C) 2008-2013 ArcEmu Team <http://www.arcemu.org/>
  * Copyright (C) 2005-2007 Burlex <burlex@gmail.com>
- * Copyright (C) 2012 <http://www.ArcEmu.org/>
+ *
+ * Voice Chat Engine
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by

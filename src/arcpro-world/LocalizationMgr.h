@@ -1,7 +1,6 @@
 /*
  * ArcPro MMORPG Server
- * Copyright (C) 2011-2013 <http://arcpro.sexyi.am/>
- * String Localization Manager
+ * Copyright (C) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
  * Copyright (C) 2007-2012 Burlex <burlex@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify

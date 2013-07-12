@@ -1,6 +1,8 @@
 /*
+ * ArcPro MMORPG Server
+ * Copyright (C) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
  * Copyright (C) 2008-2013 TrinityCore <http://www.trinitycore.org/>
- * Copyright (C) 2005-2009 MaNGOS <http://getmangos.com/>
+ * Copyright (C) 2005-2011 MaNGOS <http://getmangos.com/>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -14,6 +16,7 @@
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 #include "Player.h"
@@ -5600,12 +5603,12 @@ bool Player::CanJoinConstantChannelInZone(ChatChannelsEntry const* channel, Area
 
 void Player::JoinedChannel(Channel* c)
 {
-    m_channels.push_back(c);
+    m_channels.push_back(C);
 }
 
 void Player::LeftChannel(Channel* c)
 {
-    m_channels.remove(c);
+    m_channels.remove(C);
 }
 
 void Player::CleanupChannels()
@@ -25652,7 +25655,7 @@ bool Player::canSeeSpellClickOn(Creature const* c) const
             return false;
 
         ConditionList conds = sConditionMgr->GetConditionsForSpellClickEvent(c->GetEntry(), itr->second.spellId);
-        ConditionSourceInfo info = ConditionSourceInfo(const_cast<Player*>(this), const_cast<Creature*>(c));
+        ConditionSourceInfo info = ConditionSourceInfo(const_cast<Player*>(this), const_cast<Creature*>(C));
         if (sConditionMgr->IsObjectMeetToConditions(info, conds))
             return true;
     }

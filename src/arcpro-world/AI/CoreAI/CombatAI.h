@@ -1,7 +1,8 @@
 /*
- * Copyright (C) 2011-2013 ArcPro Speculation <http://www.arcpro.sexyi.am/>
+ * ArcPro MMORPG Server
+ * Copyright (C) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
  * Copyright (C) 2008-2013 TrinityCore <http://www.trinitycore.org/>
- * Copyright (C) 2005-2009 MaNGOS <http://getmangos.com/>
+ * Copyright (C) 2005-2011 MaNGOS <http://getmangos.com/>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -15,6 +16,7 @@
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 #ifndef TRINITY_COMBATAI_H
@@ -29,7 +31,7 @@ class Creature;
 class AggressorAI : public CreatureAI
 {
     public:
-        explicit AggressorAI(Creature* c) : CreatureAI(c) {}
+        explicit AggressorAI(Creature* c) : CreatureAI(C) {}
 
         void UpdateAI(uint32);
         static int Permissible(const Creature*);
@@ -40,7 +42,7 @@ typedef std::vector<uint32> SpellVct;
 class CombatAI : public CreatureAI
 {
     public:
-        explicit CombatAI(Creature* c) : CreatureAI(c) {}
+        explicit CombatAI(Creature* c) : CreatureAI(C) {}
 
         void InitializeAI();
         void Reset();
@@ -57,7 +59,7 @@ class CombatAI : public CreatureAI
 class CasterAI : public CombatAI
 {
     public:
-        explicit CasterAI(Creature* c) : CombatAI(c) { m_attackDist = MELEE_RANGE; }
+        explicit CasterAI(Creature* c) : CombatAI(C) { m_attackDist = MELEE_RANGE; }
         void InitializeAI();
         void AttackStart(Unit* victim) { AttackStartCaster(victim, m_attackDist); }
         void UpdateAI(uint32 diff);

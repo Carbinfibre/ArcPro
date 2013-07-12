@@ -1,8 +1,8 @@
 /*
  * ArcPro MMORPG Server
- * Copyright (C) 2011-2013 <http://arcpro.sexyi.am/>
+ * Copyright (C) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
  * Copyright (C) 2005-2007 Ascent Team <http://www.ascentemu.com/>
- * Copyright (C) 2008-2012 <http://www.ArcEmu.org/>
+ * Copyright (C) 2008-2013 ArcEmu Team <http://www.arcemu.org/>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -87,7 +87,7 @@ void WorldSession::HandleSplitOpcode(WorldPacket & recv_data)
 				if(((c + i2->GetStackCount()) <= itemMaxStack2))
 				{
 					i1->ModStackCount(-count);
-					i2->ModStackCount(c);
+					i2->ModStackCount(C);
 					i1->m_isDirty = true;
 					i2->m_isDirty = true;
 				}
@@ -117,7 +117,7 @@ void WorldSession::HandleSplitOpcode(WorldPacket & recv_data)
 			if(i2 == NULL)
 				return;
 
-			i2->SetStackCount(c);
+			i2->SetStackCount(C);
 			i1->m_isDirty = true;
 			i2->m_isDirty = true;
 

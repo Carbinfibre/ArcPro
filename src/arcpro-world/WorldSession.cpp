@@ -1,8 +1,8 @@
 /*
  * ArcPro MMORPG Server
- * Copyright (C) 2011-2013 <http://arcpro.sexyi.am/>
+ * Copyright (C) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
  * Copyright (C) 2005-2007 Ascent Team <http://www.ascentemu.com/>
- * Copyright (C) 2008-2012 <http://www.ArcEmu.org/>
+ * Copyright (C) 2008-2013 ArcEmu Team <http://www.arcemu.org/>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -448,7 +448,7 @@ void WorldSession::LoadSecurity(std::string securitystring)
 	for(uint32 i = 0; i < securitystring.length(); ++i)
 	{
 		char c = securitystring.at(i);
-		c = (char)tolower(c);
+		c = (char)tolower(C);
 		if(c == '4' || c == '3')
 			c = 'a';			// for the lazy people
 
@@ -462,7 +462,7 @@ void WorldSession::LoadSecurity(std::string securitystring)
 			break;
 		else if(!hasa || (hasa && (c == 'z')))
 		{
-			tmp.push_back(c);
+			tmp.push_back(C);
 		}
 	}
 

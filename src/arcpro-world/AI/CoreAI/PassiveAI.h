@@ -1,7 +1,8 @@
 /*
- * Copyright (C) 2011-2013 ArcPro Speculation <http://www.arcpro.sexyi.am/>
+ * ArcPro MMORPG Server
+ * Copyright (C) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
  * Copyright (C) 2008-2013 TrinityCore <http://www.trinitycore.org/>
- * Copyright (C) 2005-2009 MaNGOS <http://getmangos.com/>
+ * Copyright (C) 2005-2011 MaNGOS <http://getmangos.com/>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -15,6 +16,7 @@
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 #ifndef TRINITY_PASSIVEAI_H
@@ -67,7 +69,7 @@ class NullCreatureAI : public CreatureAI
 class CritterAI : public PassiveAI
 {
     public:
-        explicit CritterAI(Creature* c) : PassiveAI(c) {}
+        explicit CritterAI(Creature* c) : PassiveAI(C) {}
 
         void DamageTaken(Unit* done_by, uint32& /*damage*/);
         void EnterEvadeMode();
@@ -76,7 +78,7 @@ class CritterAI : public PassiveAI
 class TriggerAI : public NullCreatureAI
 {
     public:
-        explicit TriggerAI(Creature* c) : NullCreatureAI(c) {}
+        explicit TriggerAI(Creature* c) : NullCreatureAI(C) {}
         void IsSummonedBy(Unit* summoner);
 };
 
