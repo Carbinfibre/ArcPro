@@ -3,7 +3,7 @@ PROJECT(dbcfile)
 set(prefix ${DEPENDENCY_SOURCES}/${PROJECT_NAME} )
 
 set(sources
-dbcfile.cpp
+	dbcfile.cpp
 )
 
 foreach(src IN ITEMS ${sources} )
