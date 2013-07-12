@@ -1,5 +1,6 @@
 /*
- * Moon++ Scripts for Ascent MMORPG Server
+ * ArcPro MMORPG Server
+ * Copyright (C) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
  * Copyright (C) 2005-2007 Ascent Team <http://www.ascentemu.com/>
  * Copyright (C) 2007-2008 Moon++ Team <http://www.moonplusplus.info/>
  *
@@ -15,6 +16,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 #include "StdAfx.h"

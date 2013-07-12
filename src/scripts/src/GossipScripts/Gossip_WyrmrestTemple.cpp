@@ -1,6 +1,21 @@
 /*
- * FrozenThrone Scripts
+ * ArcPro MMORPG Server
+ * Copyright (C) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
  * Copyright (C) 2008-2009 FrozenThrone Shard <http://www.dowlee.it/ft>
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2 of the License, or (at your
+ * option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 #include "Setup.h"
@@ -22,33 +37,33 @@
 #define GOSSIP_BOTTOM_TO_MIDDLE "Can you spare a drake to take me to Lord Afrasastrasz in the middle of the temple?"
 #define NPCTEXT_BOTTOM 12713
 
-class SCRIPT_DECL WyrmrestTemple_FlightGossip : public Arcemu::Gossip::Script
+class SCRIPT_DECL WyrmrestTemple_FlightGossip : public Arcpro::Gossip::Script
 {
 	public:
 		void OnHello(Object* pObject, Player* plr)
 		{
-			Arcemu::Gossip::Menu menu(pObject->GetGUID(), 0);
+			Arcpro::Gossip::Menu menu(pObject->GetGUID(), 0);
 			switch(pObject->GetEntry())
 			{
 				case CN_TOP:
 					{
 						menu.setTextID(NPCTEXT_TOP);
-						menu.AddItem(Arcemu::Gossip::ICON_CHAT, GOSSIP_TOP_TO_BOTTOM, 1);
-						menu.AddItem(Arcemu::Gossip::ICON_CHAT, GOSSIP_TOP_TO_MIDDLE, 2);
+						menu.AddItem(Arcpro::Gossip::ICON_CHAT, GOSSIP_TOP_TO_BOTTOM, 1);
+						menu.AddItem(Arcpro::Gossip::ICON_CHAT, GOSSIP_TOP_TO_MIDDLE, 2);
 					}
 					break;
 				case CN_MIDDLE:
 					{
 						menu.setTextID(NPCTEXT_MIDDLE);
-						menu.AddItem(Arcemu::Gossip::ICON_CHAT, GOSSIP_MIDDLE_TO_TOP, 3);
-						menu.AddItem(Arcemu::Gossip::ICON_CHAT, GOSSIP_MIDDLE_TO_BOTTOM, 4);
+						menu.AddItem(Arcpro::Gossip::ICON_CHAT, GOSSIP_MIDDLE_TO_TOP, 3);
+						menu.AddItem(Arcpro::Gossip::ICON_CHAT, GOSSIP_MIDDLE_TO_BOTTOM, 4);
 					}
 					break;
 				case CN_BOTTOM:
 					{
 						menu.setTextID(NPCTEXT_BOTTOM);
-						menu.AddItem(Arcemu::Gossip::ICON_CHAT, GOSSIP_BOTTOM_TO_TOP, 5);
-						menu.AddItem(Arcemu::Gossip::ICON_CHAT, GOSSIP_BOTTOM_TO_MIDDLE, 6);
+						menu.AddItem(Arcpro::Gossip::ICON_CHAT, GOSSIP_BOTTOM_TO_TOP, 5);
+						menu.AddItem(Arcpro::Gossip::ICON_CHAT, GOSSIP_BOTTOM_TO_MIDDLE, 6);
 					}
 					break;
 			}
@@ -58,7 +73,7 @@ class SCRIPT_DECL WyrmrestTemple_FlightGossip : public Arcemu::Gossip::Script
 
 		void OnSelectOption(Object* pObject, Player* plr, uint32 Id, const char* Code)
 		{
-			Arcemu::Gossip::Menu::Complete(plr);
+			Arcpro::Gossip::Menu::Complete(plr);
 			switch(Id)
 			{
 				case 1:
@@ -88,7 +103,7 @@ class SCRIPT_DECL WyrmrestTemple_FlightGossip : public Arcemu::Gossip::Script
 
 void SetupWyrmrestTempleGossip(ScriptMgr* mgr)
 {
-	Arcemu::Gossip::Script* WyrmrestTempleFlightGossip = new WyrmrestTemple_FlightGossip;
+	Arcpro::Gossip::Script* WyrmrestTempleFlightGossip = new WyrmrestTemple_FlightGossip;
 
 	mgr->register_creature_gossip(CN_TOP, WyrmrestTempleFlightGossip);	// Torastrasza <Majordomo to the Ruling Council>
 	mgr->register_creature_gossip(CN_MIDDLE, WyrmrestTempleFlightGossip);	// Lord Afrasastrasz <Commander of Wyrmrest Temple Defenses>

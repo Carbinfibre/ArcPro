@@ -1,20 +1,22 @@
 /*
- * Moon++ Scripts for Ascent MMORPG Server
+ * ArcPro MMORPG Server
+ * Copyright (C) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
  * Copyright (C) 2005-2007 Ascent Team <http://www.ascentemu.com/>
  * Copyright (C) 2007-2008 Moon++ Team <http://www.moonplusplus.info/>
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2 of the License, or (at your
+ * option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 #include "Setup.h"
@@ -26,7 +28,7 @@
 #define SPELL_TREAT             24715
 // -------------------------
 
-class InnkeeperGossip : public Arcemu::Gossip::Script
+class InnkeeperGossip : public Arcpro::Gossip::Script
 {
 	public:
 		void OnHello(Object* pObject, Player* Plr);
@@ -47,18 +49,18 @@ void InnkeeperGossip::OnHello(Object* pObject, Player* Plr)
 		if(text != 0)
 			TextID = Text;
 	}
-	Arcemu::Gossip::Menu menu(pCreature->GetGUID(), TextID, 0);
+	Arcpro::Gossip::Menu menu(pCreature->GetGUID(), TextID, 0);
 
 #ifdef	EVENT_HALLOWEEN
 	if(!Plr->HasAura(SPELL_TRICK_OR_TREATED))
-		menu.AddItem(Arcemu::Gossip::ICON_CHAT, "Trick or Treat!", 4);
+		menu.AddItem(Arcpro::Gossip::ICON_CHAT, "Trick or Treat!", 4);
 #endif
 
 	if(pCreature->isVendor())
-		menu.AddItem(Arcemu::Gossip::ICON_VENDOR, Plr->GetSession()->LocalizedWorldSrv(Arcemu::Gossip::VENDOR), 1);
+		menu.AddItem(Arcpro::Gossip::ICON_VENDOR, Plr->GetSession()->LocalizedWorldSrv(Arcpro::Gossip::VENDOR), 1);
 
-	menu.AddItem(Arcemu::Gossip::ICON_CHAT, Plr->GetSession()->LocalizedWorldSrv(Arcemu::Gossip::INNKEEPER), 2);
-	menu.AddItem(Arcemu::Gossip::ICON_CHAT, "What can I do at an inn?", 3);
+	menu.AddItem(Arcpro::Gossip::ICON_CHAT, Plr->GetSession()->LocalizedWorldSrv(Arcpro::Gossip::INNKEEPER), 2);
+	menu.AddItem(Arcpro::Gossip::ICON_CHAT, "What can I do at an inn?", 3);
 
 	sQuestMgr.FillQuestMenu(pCreature, Plr, menu);
 
@@ -84,7 +86,7 @@ void InnkeeperGossip::OnSelectOption(Object* pObject, Player* Plr, uint32 Id, co
 			break;
 		case 3:     // WHAT CAN I DO ?
 			// Prepare second menu
-			Arcemu::Gossip::Menu::SendQuickMenu(pCreature->GetGUID(), 1853, Plr, 2, Arcemu::Gossip::ICON_CHAT, Plr->GetSession()->LocalizedWorldSrv(Arcemu::Gossip::INNKEEPER));
+			Arcpro::Gossip::Menu::SendQuickMenu(pCreature->GetGUID(), 1853, Plr, 2, Arcpro::Gossip::ICON_CHAT, Plr->GetSession()->LocalizedWorldSrv(Arcpro::Gossip::INNKEEPER));
 			break;
 		case 4:     // EVENT OF HALLOWEEN
 			if(!Plr->HasAura(SPELL_TRICK_OR_TREATED))
@@ -144,14 +146,14 @@ void InnkeeperGossip::OnSelectOption(Object* pObject, Player* Plr, uint32 Id, co
 					pCreature->CastSpell(Plr, trickspell, true);
 				}
 			}
-			Arcemu::Gossip::Menu::Complete(Plr);
+			Arcpro::Gossip::Menu::Complete(Plr);
 			break;
 	}
 }
 
 void SetupInnkeepers(ScriptMgr* mgr)
 {
-	Arcemu::Gossip::Script* gs = new InnkeeperGossip();
+	Arcpro::Gossip::Script* gs = new InnkeeperGossip();
 	/* Innkeeper List */
 	mgr->register_creature_gossip(15174, gs);     //Calandrath
 	mgr->register_creature_gossip(18251, gs);     //Caregiver Abidaar
