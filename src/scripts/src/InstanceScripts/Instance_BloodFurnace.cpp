@@ -1,6 +1,7 @@
 /*
- * ArcScripts for ArcEmu MMORPG Server
- * Copyright (C) 2009 ArcEmu Team <http://www.arcemu.org/>
+ * ArcPro MMORPG Server
+ * Copyright (C) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
+ * Copyright (C) 2008-2013 ArcEmu Team <http://www.arcemu.org/>
  * Copyright (C) 2008-2009 Sun++ Team <http://www.sunscripting.com/>
  * Copyright (C) 2005-2007 Ascent Team <http://www.ascentemu.com/>
  * Copyright (C) 2007-2008 Moon++ Team <http://www.moonplusplus.info/>

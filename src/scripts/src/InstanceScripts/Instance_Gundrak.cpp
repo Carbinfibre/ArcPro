@@ -1,6 +1,7 @@
 /*
- * ArcScripts for ArcEmu MMORPG Server
- * Copyright (C) 2010 ArcEmu Team <http://www.arcemu.org/>
+ * ArcPro MMORPG Server
+ * Copyright (C) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
+ * Copyright (C) 2008-2013 ArcEmu Team <http://www.arcemu.org/>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,6 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 

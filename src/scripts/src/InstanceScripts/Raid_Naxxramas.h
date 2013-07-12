@@ -1,6 +1,7 @@
 /*
- * ArcScripts for ArcEmu MMORPG Server
- * Copyright (C) 2009 ArcEmu Team <http://www.arcemu.org/>
+ * ArcPro MMORPG Server
+ * Copyright (C) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
+ * Copyright (C) 2008-2013 ArcEmu Team <http://www.arcemu.org/>
  * Copyright (C) 2008-2009 Sun++ Team <http://www.sunscripting.com/>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,6 +16,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 class GrandWidowFaerlinaAI;
