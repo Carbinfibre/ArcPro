@@ -1,6 +1,7 @@
 /*
- * Arcemu
- * Copyright (C) 2008 - 2011 Arcemu <http://www.arcemu.org/>
+ * ArcPro MMORPG Server
+ * Copyright (C) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
+ * Copyright (C) 2008-2013 ArcEmu Team <http://www.arcemu.org/>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -19,7 +20,6 @@
  
 #include "StdAfx.h"
 #include "IsleOfConquest.h"
-
 
 #define IOC_NUM_REINFORCEMENTS 300
 #define IOC_POINTS_ON_KILL 1
