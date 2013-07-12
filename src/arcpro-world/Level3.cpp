@@ -342,7 +342,7 @@ bool ChatHandler::HandleLearnCommand(const char* args, WorldSession* m_session)
 		};
 
 		uint32 r = plr->getRace();
-		switch(C)
+		switch(c)
 		{
 			case PALADIN:
 				for(uint32 i = 0; paladinspellarray[r][i] != 0; ++i)

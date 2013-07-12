@@ -1627,7 +1627,7 @@ void MapMgr::EventRespawnCreature(Creature* c, uint16 x, uint16 y)
 	if(cell == NULL)
 		return;
 
-	ObjectSet::iterator itr = cell->_respawnObjects.find(C);
+	ObjectSet::iterator itr = cell->_respawnObjects.find(c);
 	if(itr != cell->_respawnObjects.end())
 	{
 		c->m_respawnCell = NULL;
@@ -1862,12 +1862,12 @@ DynamicObject* MapMgr::CreateDynamicObject()
 
 void MapMgr::AddForcedCell(MapCell* c)
 {
-	m_forcedcells.insert(C);
+	m_forcedcells.insert(c);
 	UpdateCellActivity(c->GetPositionX(), c->GetPositionY(), 1);
 }
 void MapMgr::RemoveForcedCell(MapCell* c)
 {
-	m_forcedcells.erase(C);
+	m_forcedcells.erase(c);
 	UpdateCellActivity(c->GetPositionX(), c->GetPositionY(), 1);
 }
 

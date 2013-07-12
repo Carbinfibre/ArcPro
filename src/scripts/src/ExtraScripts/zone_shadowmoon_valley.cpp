@@ -1253,7 +1253,7 @@ public:
 
     CreatureAI* GetAI(Creature* c) const
     {
-        return new mob_torloth_the_magnificentAI(C);
+        return new mob_torloth_the_magnificentAI(c);
     }
 
     struct mob_torloth_the_magnificentAI : public ScriptedAI
@@ -1408,7 +1408,7 @@ public:
 
     CreatureAI* GetAI(Creature* c) const
     {
-        return new npc_lord_illidan_stormrageAI(C);
+        return new npc_lord_illidan_stormrageAI(c);
     }
 
     struct npc_lord_illidan_stormrageAI : public ScriptedAI
@@ -1556,7 +1556,7 @@ public:
 
     CreatureAI* GetAI(Creature* c) const
     {
-        return new mob_illidari_spawnAI(C);
+        return new mob_illidari_spawnAI(c);
     }
 
     struct mob_illidari_spawnAI : public ScriptedAI

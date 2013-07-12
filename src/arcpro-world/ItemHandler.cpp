@@ -87,7 +87,7 @@ void WorldSession::HandleSplitOpcode(WorldPacket & recv_data)
 				if(((c + i2->GetStackCount()) <= itemMaxStack2))
 				{
 					i1->ModStackCount(-count);
-					i2->ModStackCount(C);
+					i2->ModStackCount(c);
 					i1->m_isDirty = true;
 					i2->m_isDirty = true;
 				}
@@ -117,7 +117,7 @@ void WorldSession::HandleSplitOpcode(WorldPacket & recv_data)
 			if(i2 == NULL)
 				return;
 
-			i2->SetStackCount(C);
+			i2->SetStackCount(c);
 			i1->m_isDirty = true;
 			i2->m_isDirty = true;
 

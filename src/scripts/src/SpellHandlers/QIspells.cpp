@@ -1492,7 +1492,7 @@ bool ArcaneDisruption(uint32 i, Aura* pAura, bool apply)
 			if(cp && ci)
 			{
 				c = plr->GetMapMgr()->CreateCreature(26528);
-				if(C)
+				if(c)
 				{
 					//position is guessed
 					c->Load(cp, 1759.4351f, 1265.3317f, 138.052f, 0.1902f);

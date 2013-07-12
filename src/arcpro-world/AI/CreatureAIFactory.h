@@ -39,7 +39,7 @@ struct CreatureAIFactory : public SelectableAI
 
     CreatureAI* Create(void*) const;
 
-    int Permit(const Creature* c) const { return REAL_AI::Permissible(C); }
+    int Permit(const Creature* c) const { return REAL_AI::Permissible(c); }
 };
 
 template<class REAL_AI>

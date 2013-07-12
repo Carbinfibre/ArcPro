@@ -34,7 +34,7 @@ namespace Arcpro
 				IsDelimiter(string const & rostr) : m_ostr(rostr) {}
 				bool operator()(char c) const
 				{
-					return m_ostr.find(C) != string::npos;
+					return m_ostr.find(c) != string::npos;
 				}
 
 			private:

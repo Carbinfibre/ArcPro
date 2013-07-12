@@ -151,9 +151,9 @@ bool ChatHandler::CreateGuildCommand(const char* args, WorldSession* m_session)
 }
 
 /*
-#define isalpha(C)  {isupper(C) || islower(C))
-#define isupper(C)  (c >=  'A' && c <= 'Z')
-#define islower(C)  (c >=  'a' && c <= 'z')
+#define isalpha(c)  {isupper(c) || islower(c))
+#define isupper(c)  (c >=  'A' && c <= 'Z')
+#define islower(c)  (c >=  'a' && c <= 'z')
 */
 
 bool ChatHandler::HandleDeleteCommand(const char* args, WorldSession* m_session)

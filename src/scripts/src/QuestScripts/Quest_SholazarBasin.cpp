@@ -31,7 +31,7 @@ class ChickenEscapee : public CreatureAIScript
 {
 	public:
 		ADD_CREATURE_FACTORY_FUNCTION(ChickenEscapee);
-		ChickenEscapee(Creature* c) : CreatureAIScript(C) {}
+		ChickenEscapee(Creature* c) : CreatureAIScript(c) {}
 
 		void OnLoad()
 		{

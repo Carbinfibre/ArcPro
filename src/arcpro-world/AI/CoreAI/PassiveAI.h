@@ -69,7 +69,7 @@ class NullCreatureAI : public CreatureAI
 class CritterAI : public PassiveAI
 {
     public:
-        explicit CritterAI(Creature* c) : PassiveAI(C) {}
+        explicit CritterAI(Creature* c) : PassiveAI(c) {}
 
         void DamageTaken(Unit* done_by, uint32& /*damage*/);
         void EnterEvadeMode();
@@ -78,7 +78,7 @@ class CritterAI : public PassiveAI
 class TriggerAI : public NullCreatureAI
 {
     public:
-        explicit TriggerAI(Creature* c) : NullCreatureAI(C) {}
+        explicit TriggerAI(Creature* c) : NullCreatureAI(c) {}
         void IsSummonedBy(Unit* summoner);
 };
 

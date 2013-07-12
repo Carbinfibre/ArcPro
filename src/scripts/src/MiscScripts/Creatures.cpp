@@ -73,7 +73,7 @@ class SavannahProwler : public CreatureAIScript
 				_unit->SetStandState(0);
 		}
 
-		static CreatureAIScript* Create(Creature* c) { return new SavannahProwler(C); }
+		static CreatureAIScript* Create(Creature* c) { return new SavannahProwler(c); }
 };
 
 //Lazy Peons
@@ -307,7 +307,7 @@ class DISCO : public CreatureAIScript
 {
 	public:
 		ADD_CREATURE_FACTORY_FUNCTION(DISCO);
-		DISCO(Creature* c) : CreatureAIScript(C) {}
+		DISCO(Creature* c) : CreatureAIScript(c) {}
 
 		void OnLoad()
 		{

@@ -134,7 +134,7 @@ bool Master::Run(int argc, char** argv)
 	char c;
 	while((c = static_cast<char>(arcpro_getopt_long_only(argc, argv, ":f:", longopts, NULL))) != -1)
 	{
-		switch(C)
+		switch(c)
 		{
 			case 'c':
 				config_file = new char[strlen(arcemu_optarg)];

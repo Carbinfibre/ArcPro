@@ -125,7 +125,7 @@ public:
 
     CreatureAI* GetAI(Creature* c) const
     {
-        return new mob_blood_elf_council_voice_triggerAI(C);
+        return new mob_blood_elf_council_voice_triggerAI(c);
     }
 
     struct mob_blood_elf_council_voice_triggerAI : public ScriptedAI

@@ -23,9 +23,9 @@
 #include "Creature.h"
 #include "TemporarySummon.h"
 
-PassiveAI::PassiveAI(Creature* c) : CreatureAI(C) { me->SetReactState(REACT_PASSIVE); }
-PossessedAI::PossessedAI(Creature* c) : CreatureAI(C) { me->SetReactState(REACT_PASSIVE); }
-NullCreatureAI::NullCreatureAI(Creature* c) : CreatureAI(C) { me->SetReactState(REACT_PASSIVE); }
+PassiveAI::PassiveAI(Creature* c) : CreatureAI(c) { me->SetReactState(REACT_PASSIVE); }
+PossessedAI::PossessedAI(Creature* c) : CreatureAI(c) { me->SetReactState(REACT_PASSIVE); }
+NullCreatureAI::NullCreatureAI(Creature* c) : CreatureAI(c) { me->SetReactState(REACT_PASSIVE); }
 
 void PassiveAI::UpdateAI(uint32)
 {

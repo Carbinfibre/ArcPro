@@ -90,7 +90,7 @@ int main(int argc, char *argv[]) {
 		int c = getopt(argc, argv, "r:d:");
 		if (c == -1) break;
 
-		switch (C) {
+		switch (c) {
 			case 'r': opts.revision = strdup(optarg); break;
 			case 'd': opts.details = strdup(optarg); break;
 			default: printf("default\n");

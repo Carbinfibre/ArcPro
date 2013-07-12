@@ -5603,12 +5603,12 @@ bool Player::CanJoinConstantChannelInZone(ChatChannelsEntry const* channel, Area
 
 void Player::JoinedChannel(Channel* c)
 {
-    m_channels.push_back(C);
+    m_channels.push_back(c);
 }
 
 void Player::LeftChannel(Channel* c)
 {
-    m_channels.remove(C);
+    m_channels.remove(c);
 }
 
 void Player::CleanupChannels()
@@ -25655,7 +25655,7 @@ bool Player::canSeeSpellClickOn(Creature const* c) const
             return false;
 
         ConditionList conds = sConditionMgr->GetConditionsForSpellClickEvent(c->GetEntry(), itr->second.spellId);
-        ConditionSourceInfo info = ConditionSourceInfo(const_cast<Player*>(this), const_cast<Creature*>(C));
+        ConditionSourceInfo info = ConditionSourceInfo(const_cast<Player*>(this), const_cast<Creature*>(c));
         if (sConditionMgr->IsObjectMeetToConditions(info, conds))
             return true;
     }

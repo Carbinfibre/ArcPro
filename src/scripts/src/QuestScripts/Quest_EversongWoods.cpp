@@ -111,7 +111,7 @@ class ProspectorAnvilwardAI : public CreatureAIScript
 {
 	public:
 		ADD_CREATURE_FACTORY_FUNCTION(ProspectorAnvilwardAI);
-		ProspectorAnvilwardAI(Creature* c) : CreatureAIScript(C)
+		ProspectorAnvilwardAI(Creature* c) : CreatureAIScript(c)
 		{
 		}
 

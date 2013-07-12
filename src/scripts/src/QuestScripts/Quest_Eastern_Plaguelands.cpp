@@ -27,7 +27,7 @@ class Flayer : public CreatureAIScript
 {
 	public:
 		Flayer(Creature* pCreature) : CreatureAIScript(pCreature) { }
-		static CreatureAIScript* Create(Creature* c) { return new Flayer(C); }
+		static CreatureAIScript* Create(Creature* c) { return new Flayer(c); }
 
 		void OnDied(Unit* mKiller)
 		{

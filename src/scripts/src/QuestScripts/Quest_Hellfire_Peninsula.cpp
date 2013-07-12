@@ -310,7 +310,7 @@ class AncestralSpiritWolf : public CreatureAIScript
 {
 	public:
 		ADD_CREATURE_FACTORY_FUNCTION(AncestralSpiritWolf);
-		AncestralSpiritWolf(Creature* c) : CreatureAIScript(C) {}
+		AncestralSpiritWolf(Creature* c) : CreatureAIScript(c) {}
 		void OnLoad()
 		{
 			_unit->CastSpell(_unit, 29938, false);
