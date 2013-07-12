@@ -1,8 +1,8 @@
 /*
  * ArcPro MMORPG Server
- * Copyright (C) 2011 - 2013 (http://arcpro.sexyi.am/)
+ * Copyright (C) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
  * Copyright (C) 2005-2007 Ascent Team <http://www.ascentemu.com/>
- * Copyright (C) 2008 - 2013 <http://www.arcemu.org/>
+ * Copyright (C) 2008-2013 ArcEmu Team <http://www.arcemu.org/>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -18,7 +18,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 
 #include "PerformanceCounter.hpp"
 #include "SysInfo.hpp"

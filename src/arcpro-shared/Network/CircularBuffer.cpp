@@ -1,11 +1,8 @@
 /*
  * ArcPro MMORPG Server
- * Copyright (C) 2011 - 2013 (http://arcpro.sexyi.am/)
- * Copyright (C) 2008-2012 <http://www.arcpro.com/>
- *
- * Circular Buffer Class
- * Based on the Bip Buffer concept, from http://www.codeproject.com/KB/IP/bipbuffer.aspx
- * Implementation Copyright (C) 2008-2010 Burlex
+ * Copyright (C) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
+ * Copyright (C) 2008-2013 ArcEmu Team <http://www.arcemu.org/>
+ * Copyright (C) 2007-2010 Burlex <burlex@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by

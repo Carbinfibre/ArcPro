@@ -1,7 +1,7 @@
 /*
- * Thread Pool Class
- * Copyright (C) 2011 - 2013 <http://arcpro.sexyi.am/>
- * Copyright (C) Burlex <burlex@gmail.com>
+ * ArcPro MMORPG Server
+ * Copyright (C) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
+ * Copyright (C) 2007-2010 Burlex <burlex@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by

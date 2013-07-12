@@ -1,10 +1,7 @@
 /*
  * ArcPro MMORPG Server
- * Circular Queue
- * Template C++ class that can be used to store a set number of elements,
- * replacing old ones as new ones are added.
- * Copyright (C) 2011 - 2013 (http://arcpro.sexyi.am/)
- * Copyright (C) 2005 - 2007 Burlex <burlex@gmail.com>
+ * Copyright (C) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
+ * Copyright (C) 2005-2007 Burlex <burlex@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -18,6 +15,10 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Circular Queue
+ * Template C++ class that can be used to store a set number of elements,
+ * replacing old ones as new ones are added.
  *
  */
 
