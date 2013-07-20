@@ -1,8 +1,8 @@
 /*
  * ArcPro MMORPG Server
- * Copyright (C) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
- * Copyright (C) 2005-2007 Ascent Team <http://www.ascentemu.com/>
- * Copyright (C) 2008-2013 ArcEmu Team <http://www.arcemu.org/>
+ * Copyright (c) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
+ * Copyright (c) 2005-2007 Ascent Team <http://www.ascentemu.com/>
+ * Copyright (c) 2008-2013 ArcEmu Team <http://www.arcemu.org/>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -5756,7 +5756,7 @@ void Spell::SendCastSuccess(const uint64 & guid)
 	*(uint32*)&buffer[c] = GetProto()->Id;
 	c += 4;
 
-	plr->GetSession()->OutPacket(uint16(SMSG_CLEAR_EXTRA_AURA_INFO_OBSOLETE), static_cast<uint16>(C), buffer);
+	plr->GetSession()->OutPacket(uint16(SMSG_CLEAR_EXTRA_AURA_INFO_OBSOLETE), static_cast<uint16>(c), buffer);
 }
 
 uint8 Spell::GetErrorAtShapeshiftedCast(SpellEntry* spellInfo, uint32 form)

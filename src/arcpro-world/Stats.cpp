@@ -1,8 +1,8 @@
 /*
  * ArcPro MMORPG Server
- * Copyright (C) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
- * Copyright (C) 2005-2007 Ascent Team <http://www.ascentemu.com/>
- * Copyright (C) 2008-2013 ArcEmu Team <http://www.arcemu.org/>
+ * Copyright (c) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
+ * Copyright (c) 2005-2007 Ascent Team <http://www.ascentemu.com/>
+ * Copyright (c) 2008-2013 ArcEmu Team <http://www.arcemu.org/>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -594,7 +594,7 @@ uint32 CalculateDamage(Unit* pAttacker, Unit* pVictim, uint32 weapon_damage_type
 	// weapon_damage_type: 0 = melee, 1 = offhand(dualwield), 2 = ranged
 
 	// Attack Power increases your base damage-per-second (DPS) by 1 for every 14 attack power.
-	// (C) wowwiki
+	// (c) wowwiki
 
 	//type of this UNIT_FIELD_ATTACK_POWER_MODS is unknown, not even uint32 disabled for now.
 

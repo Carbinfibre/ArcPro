@@ -1,7 +1,7 @@
 /**********************************************************************
  *
  * ArcPro MMORPG Server
- * Copyright (C) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
+ * Copyright (c) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
  *
  * History:
  *  2005-07-27   v1	- First public release on http://www.codeproject.com/
@@ -906,7 +906,7 @@ static LPVOID s_readMemoryFunction_UserData = NULL;
 
 BOOL StackWalker::ShowCallstack(HANDLE hThread, const CONTEXT* context, PReadProcessMemoryRoutine readMemoryFunction, LPVOID pUserData)
 {
-	CONTEXT c;;
+	CONTEXT c;
 	CallstackEntry csEntry;
 	IMAGEHLP_SYMBOL64* pSym = NULL;
 	StackWalkerInternal::IMAGEHLP_MODULE64_V2 Module;

@@ -1,7 +1,7 @@
 /*
  * ArcPro MMORPG Server
- * Copyright (C) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
- * Copyright (C) 2005-2007 Burlex <burlex@gmail.com>
+ * Copyright (c) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
+ * Copyright (c) 2005-2007 Burlex <burlex@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by

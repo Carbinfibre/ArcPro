@@ -1,8 +1,8 @@
 /*
  * ArcPro MMORPG Server
- * Copyright (C) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
- * Copyright (C) 2005-2007 Ascent Team <http://www.ascentemu.com/>
- * Copyright (C) 2008-2013 ArcEmu Team <http://www.arcemu.org/>
+ * Copyright (c) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
+ * Copyright (c) 2005-2007 Ascent Team <http://www.ascentemu.com/>
+ * Copyright (c) 2008-2013 ArcEmu Team <http://www.arcemu.org/>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -542,7 +542,7 @@ uint8 WorldSession::DeleteCharacter(uint32 guid)
 		CharacterDatabase.WaitExecute("DELETE FROM characters WHERE guid = %u", (uint32)guid);
 
 		Corpse* c = objmgr.GetCorpseByOwner((uint32)guid);
-		if(C)
+		if(c)
 			CharacterDatabase.Execute("DELETE FROM corpses WHERE guid = %u", c->GetLowGUID());
 
 		CharacterDatabase.Execute("DELETE FROM playeritems WHERE ownerguid=%u", (uint32)guid);

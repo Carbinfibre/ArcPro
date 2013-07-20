@@ -1,7 +1,7 @@
 /**********************************************************************
  *
  * ArcPro MMORPG Server
- * Copyright (C) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
+ * Copyright (c) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
  *
  * History:
  *  2005-07-27   v1	- First public release on http://www.codeproject.com/

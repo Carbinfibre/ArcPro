@@ -1,7 +1,7 @@
 /*
  * ArcPro MMORPG Server
- * Copyright (C) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
- * Copyright (C) 2007-2010 Burlex <burlex@gmail.com>
+ * Copyright (c) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
+ * Copyright (c) 2007-2010 Burlex <burlex@gmail.com>
  *
  * Adapted from rc4.c to C++
  *

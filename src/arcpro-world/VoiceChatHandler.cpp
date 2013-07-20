@@ -1,8 +1,8 @@
 /*
  * ArcPro MMORPG Server
- * Copyright (C) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
- * Copyright (C) 2008-2013 ArcEmu Team <http://www.arcemu.org/>
- * Copyright (C) 2005-2007 Burlex <burlex@gmail.com>
+ * Copyright (c) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
+ * Copyright (c) 2008-2013 ArcEmu Team <http://www.arcemu.org/>
+ * Copyright (c) 2005-2007 Burlex <burlex@gmail.com>
  *
  * Voice Chat Engine
  *
