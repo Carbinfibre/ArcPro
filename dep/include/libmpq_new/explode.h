@@ -37,6 +37,7 @@
 #define LIBMPQ_PKZIP_CMP_ABORT			4
 
 #include "pack_begin.h"
+
 /* compression structure. */
 typedef struct {
 	uint32_t	offs0000;		/* 0000 - start. */
@@ -66,6 +67,7 @@ typedef struct {
 	uint8_t		clen_bits[0x10];	/* 3104 - number of valid bits for copied block. */
 	uint16_t	len_base[0x10];		/* 3114 - buffer. */
 } PACK_STRUCT pkzip_cmp_s;
+
 #include "pack_end.h"
 
 /* data structure. */

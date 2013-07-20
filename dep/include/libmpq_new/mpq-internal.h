@@ -65,8 +65,8 @@
 #ifndef TRUE
 #define TRUE 1
 #endif
-
 #include "pack_begin.h"
+
 /* mpq archive header. */
 typedef struct {
 	uint32_t	mpq_magic;		/* the 0x1A51504D ('MPQ\x1A') signature. */
@@ -121,6 +121,7 @@ typedef struct {
 	uint32_t	block_table_indices;	/* real mapping for file number to block entry. */
 	uint32_t	block_table_diff;	/* block table difference between valid blocks and invalid blocks before. */
 } PACK_STRUCT mpq_map_s;
+
 #include "pack_end.h"
 
 /* archive structure used since diablo 1.00 by blizzard. */
