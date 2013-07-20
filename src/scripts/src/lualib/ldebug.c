@@ -1,7 +1,7 @@
 /*
  * ArcPro MMORPG Server
- * Copyright (C) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
- * Copyright (C) 1994-2013 Lua <http://www.lua.org>
+ * Copyright (c) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
+ * Copyright (c) 1994-2013 Lua <http://www.lua.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -500,8 +500,8 @@ int luaG_checkcode (const Proto *pt) {
 
 
 static const char *kname (Proto *p, int c) {
-  if (ISK(C) && ttisstring(&p->k[INDEXK(C)]))
-    return svalue(&p->k[INDEXK(C)]);
+  if (ISK(c) && ttisstring(&p->k[INDEXK(c)]))
+    return svalue(&p->k[INDEXK(c)]);
   else
     return "?";
 }

@@ -1,7 +1,7 @@
 /*
  * ArcPro MMORPG Server
- * Copyright (C) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
- * Copyright (C) 1994-2013 Lua <http://www.lua.org>
+ * Copyright (c) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
+ * Copyright (c) 1994-2013 Lua <http://www.lua.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -34,7 +34,7 @@
 
 
 /* macro to `unsign' a character */
-#define uchar(C)        ((unsigned char)(C))
+#define uchar(c)        ((unsigned char)(c))
 
 
 
@@ -142,8 +142,8 @@ static int str_char (lua_State *L) {
   luaL_buffinit(L, &b);
   for (i=1; i<=n; i++) {
     int c = luaL_checkint(L, i);
-    luaL_argcheck(L, uchar(C) == c, i, "invalid value");
-    luaL_addchar(&b, uchar(C));
+    luaL_argcheck(L, uchar(c) == c, i, "invalid value");
+    luaL_addchar(&b, uchar(c));
   }
   luaL_pushresult(&b);
   return 1;
@@ -239,15 +239,15 @@ static const char *classend (MatchState *ms, const char *p) {
 static int match_class (int c, int cl) {
   int res;
   switch (tolower(cl)) {
-    case 'a' : res = isalpha(C); break;
-    case 'c' : res = iscntrl(C); break;
-    case 'd' : res = isdigit(C); break;
-    case 'l' : res = islower(C); break;
-    case 'p' : res = ispunct(C); break;
-    case 's' : res = isspace(C); break;
-    case 'u' : res = isupper(C); break;
-    case 'w' : res = isalnum(C); break;
-    case 'x' : res = isxdigit(C); break;
+    case 'a' : res = isalpha(c); break;
+    case 'c' : res = iscntrl(c); break;
+    case 'd' : res = isdigit(c); break;
+    case 'l' : res = islower(c); break;
+    case 'p' : res = ispunct(c); break;
+    case 's' : res = isspace(c); break;
+    case 'u' : res = isupper(c); break;
+    case 'w' : res = isalnum(c); break;
+    case 'x' : res = isxdigit(c); break;
     case 'z' : res = (c == 0); break;
     default: return (cl == c);
   }

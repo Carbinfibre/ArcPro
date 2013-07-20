@@ -1,7 +1,7 @@
 /*
  * ArcPro MMORPG Server
- * Copyright (C) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
- * Copyright (C) 1994-2013 Lua <http://www.lua.org>
+ * Copyright (c) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
+ * Copyright (c) 1994-2013 Lua <http://www.lua.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -621,21 +621,21 @@ union luai_Cast { double l_d; long l_l; };
 */
 #if defined(__cplusplus)
 /* C++ exceptions */
-#define LUAI_THROW(L,c)	throw(C)
+#define LUAI_THROW(L,c)	throw(c)
 #define LUAI_TRY(L,c,a)	try { a } catch(...) \
-	{ if ((C)->status == 0) (C)->status = -1; }
+	{ if ((c)->status == 0) (c)->status = -1; }
 #define luai_jmpbuf	int  /* dummy variable */
 
 #elif defined(LUA_USE_ULONGJMP)
 /* in Unix, try _longjmp/_setjmp (more efficient) */
-#define LUAI_THROW(L,c)	_longjmp((C)->b, 1)
-#define LUAI_TRY(L,c,a)	if (_setjmp((C)->b) == 0) { a }
+#define LUAI_THROW(L,c)	_longjmp((c)->b, 1)
+#define LUAI_TRY(L,c,a)	if (_setjmp((c)->b) == 0) { a }
 #define luai_jmpbuf	jmp_buf
 
 #else
 /* default handling with long jumps */
-#define LUAI_THROW(L,c)	longjmp((C)->b, 1)
-#define LUAI_TRY(L,c,a)	if (setjmp((C)->b) == 0) { a }
+#define LUAI_THROW(L,c)	longjmp((c)->b, 1)
+#define LUAI_TRY(L,c,a)	if (setjmp((c)->b) == 0) { a }
 #define luai_jmpbuf	jmp_buf
 
 #endif

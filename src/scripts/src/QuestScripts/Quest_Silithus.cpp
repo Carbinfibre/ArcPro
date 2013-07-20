@@ -1,9 +1,9 @@
 /*
  * ArcPro MMORPG Server
- * Copyright (C) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
- * Copyright (C) 2006-2008 U2 Team <http://www.undzwei.eu/>
- * Copyright (C) 2007-2008 Yelly Team
- * Copyright (C) 2009 WhyScripts Team <http://www.whydb.org/>
+ * Copyright (c) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
+ * Copyright (c) 2006-2008 U2 Team <http://www.undzwei.eu/>
+ * Copyright (c) 2007-2008 Yelly Team
+ * Copyright (c) 2009 WhyScripts Team <http://www.whydb.org/>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the

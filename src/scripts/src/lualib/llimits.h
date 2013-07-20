@@ -1,7 +1,7 @@
 /*
  * ArcPro MMORPG Server
- * Copyright (C) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
- * Copyright (C) 1994-2013 Lua <http://www.lua.org>
+ * Copyright (c) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
+ * Copyright (c) 1994-2013 Lua <http://www.lua.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -68,12 +68,12 @@ typedef LUAI_UACNUMBER l_uacNumber;
 /* internal assertions for in-house debugging */
 #ifdef lua_assert
 
-#define check_exp(c,e)		(lua_assert(C), (e))
+#define check_exp(c,e)		(lua_assert(c), (e))
 #define api_check(l,e)		lua_assert(e)
 
 #else
 
-#define lua_assert(C)		((void)0)
+#define lua_assert(c)		((void)0)
 #define check_exp(c,e)		(e)
 #define api_check		luai_apicheck
 

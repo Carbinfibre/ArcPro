@@ -1,11 +1,11 @@
 /*
  * ArcPro MMORPG Server
- * Copyright (C) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
- * Copyright (C) 2008-2013 ArcEmu Team <http://www.arcemu.org/>
- * Copyright (C) 2008-2009 Sun++ Team <http://www.sunscripting.com/>
- * Copyright (C) 2009 WhyScripts Team <http://www.whydb.org/>
- * Copyright (C) 2005-2007 Ascent Team <http://www.ascentcommunity.com/>
- * Copyright (C) 2007-2008 Moon++ Team <http://sunplusplus.info/>
+ * Copyright (c) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
+ * Copyright (c) 2008-2013 ArcEmu Team <http://www.arcemu.org/>
+ * Copyright (c) 2008-2009 Sun++ Team <http://www.sunscripting.com/>
+ * Copyright (c) 2009 WhyScripts Team <http://www.whydb.org/>
+ * Copyright (c) 2005-2007 Ascent Team <http://www.ascentcommunity.com/>
+ * Copyright (c) 2007-2008 Moon++ Team <http://sunplusplus.info/>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
