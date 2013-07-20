@@ -467,6 +467,3 @@ target_link_libraries( ${PROJECT_NAME} shared  g3dlite vmaplib detour recast ${P
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION .)
 
 
-
-
-

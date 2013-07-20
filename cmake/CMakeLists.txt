@@ -215,5 +215,6 @@ IF( BUILD_TOOLS )
 	add_subdirectory(tools)
 ENDIF( BUILD_TOOLS )
 
+include(compiler/msvc/settings.cmake)
 
 INSTALL(FILES ${INSTALLED_DEPENDENCIES} DESTINATION .)
