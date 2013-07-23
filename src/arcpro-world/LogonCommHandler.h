@@ -47,7 +47,7 @@ typedef struct
 enum RealmType
 {
     REALMTYPE_NORMAL = 0,
-    REALMTYPE_PVP	= 3,
+    REALMTYPE_PVP	 = 3,
     REALMTYPE_RP	 = 6,
     REALMTYPE_RPPVP  = 8,
 };

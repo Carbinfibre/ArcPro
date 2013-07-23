@@ -111,7 +111,7 @@ public:
         // check if there is a entry in the db
         if ( NpcTextStorage.LookupEntry(Text) == NULL ) { return; }
 
-        Arcemu::Gossip::Menu menu(pObject->GetGUID(), Text, plr->GetSession()->language);
+        Arcpro::Gossip::Menu menu(pObject->GetGUID(), Text, plr->GetSession()->language);
         sQuestMgr.FillQuestMenu(TO_CREATURE(pObject), plr, menu);
 
         // Requirements:
