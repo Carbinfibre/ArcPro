@@ -131,7 +131,6 @@ bool ShowCompletedAchievement(uint32 achievementID, const Player* plr)
 		case 1410: // Realm First! Level 80 Orc
 		case 1411: // Realm First! Level 80 Tauren
 		case 1412: // Realm First! Level 80 Troll
-
 		case 4999: // Realm First! Level 85
 		case 5005: // Realm First! Level 85 Death Knight
 		case 5000: // Realm First! Level 85 Druid
@@ -211,14 +210,6 @@ bool ShowCompletedAchievement(uint32 achievementID, const Player* plr)
 //		case 5409: // Realm First! Nefarian
 //		case 5985: // Realm First! Ragnaros
 //		case 5411: // Realm First! Sinestra
-//		case 
-//		case 
-//		case 
-//		case 
-//		case 
-//		case 
-//		case 
-//		case 
 		default:
 			break;
 	}
