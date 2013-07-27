@@ -1,103 +1,55 @@
 PROJECT(world)
 SET( prefix ${ROOT_PATH}/src/arcpro-world )
 SET(sources
-	Accounts/AccountMgr.cpp
-	Accounts/RBAC.cpp
-	AI/CreatureAI.cpp
-	AI/CreatureAIRegistry.cpp
-	AI/CreatureAISelector.cpp
-	AI/CoreAI/CombatAI.cpp
-	AI/CoreAI/GameObjectAI.cpp
-	AI/CoreAI/GuardAI.cpp
-	AI/CoreAI/PassiveAI.cpp
-	AI/CoreAI/PetAI.cpp
-	AI/CoreAI/ReactorAI.cpp
-	AI/CoreAI/TotemAI.cpp
-	AI/CoreAI/UnitAI.cpp
-	AI/ScriptedAI/ScriptedCreature.cpp
-	AI/ScriptedAI/ScriptedEscortAI.cpp
-	AI/ScriptedAI/ScriptedFollowerAI.cpp
-	AI/SmartScripts/SmartAI.cpp
-	AI/SmartScripts/SmartScript.cpp
-	AI/SmartScripts/SmartScriptMgr.cpp
-	Battlefield/Battlefield.cpp
-	Battlefield/BattlefieldMgr.cpp
-	Battlefield/Zones/BattlefieldWG.cpp
-	Conditions/ConditionMgr.cpp
-	Conditions/DisableMgr.cpp
+#	AI/CreatureAI.cpp
+#	AI/CreatureAIRegistry.cpp
+#	AI/CreatureAISelector.cpp
+#	AI/CoreAI/CombatAI.cpp
+#	AI/CoreAI/GameObjectAI.cpp
+#	AI/CoreAI/GuardAI.cpp
+#	AI/CoreAI/PassiveAI.cpp
+#	AI/CoreAI/PetAI.cpp
+#	AI/CoreAI/ReactorAI.cpp
+#	AI/CoreAI/TotemAI.cpp
+#	AI/CoreAI/UnitAI.cpp
+#	AI/ScriptedAI/ScriptedCreature.cpp
+#	AI/ScriptedAI/ScriptedEscortAI.cpp
+#	AI/ScriptedAI/ScriptedFollowerAI.cpp
+#	AI/SmartScripts/SmartAI.cpp
+#	AI/SmartScripts/SmartScript.cpp
+#	AI/SmartScripts/SmartScriptMgr.cpp
+#	Battlefield/Battlefield.cpp
+#	Battlefield/BattlefieldMgr.cpp
+#	Battlefield/Zones/BattlefieldWG.cpp
 	DBC/DBCStores.cpp
-	DungeonFinding/LFG.cpp
-	DungeonFinding/LFGGroupData.cpp
-	DungeonFinding/LFGMgr.cpp
-	DungeonFinding/LFGPlayerdata.cpp
-	DungeonFinding/LFGQueue.cpp
-	DungeonFinding/LFGScripts.cpp
-	Entities/Summons/CompanionSummon.cpp
-	Entities/Summons/GuardianSummon.cpp
-	Entities/Summons/PossessedSummon.cpp
-	Entities/Summons/Summon.cpp
-	Entities/Summons/TotemSummon.cpp
-	Entities/Summons/WildSummon.cpp
-	Entities/Corpse/Corpse.cpp
-	Entities/Creature/Creature.cpp
-	Entities/Creature/CreatureGroups.cpp
-	Entities/Creature/GossipDef.cpp
-	Entities/Creature/TemporarySummon.cpp
-	Entities/DynamicObject/DynamicObject.cpp
-	Entities/GameObject/GameObject.cpp
-	Entities/Item/Item.cpp
-	Entities/Item/ItemEnchantmentMgr.cpp
-	Entities/Item/Container/Bag.cpp
-	Entities/Object/Object.cpp
-	Entities/Object/ObjectPosSelector.cpp
-	Entities/Object/Updates/UpdateData.cpp
-	Entities/Object/Updates/UpdateFieldFlags.cpp
-	Entities/Pet/Pet.cpp
-	Entities/Player/Player.cpp
-	Entities/Player/SocialMgr.cpp
-	Entities/Totem/Totem.cpp
-	Entities/Transport/Transport.cpp
-	Entities/Unit/StatSystem.cpp
-	Entities/Unit/Unit.cpp
-	Entities/Vehicle/Vehicle.cpp
-	Guilds/Guild.cpp
-	Guilds/GuildFinderMgr.cpp
-	Guilds/GuildMgr.cpp
-	Handlers/AddonHandler.cpp
-	Handlers/ArenaTeamHandler.cpp
-	Handlers/AuctionHouseHandler.cpp
-	Handlers/AuthHandler.cpp
-	Handlers/BattlefieldHandler.cpp
-	Handlers/BattleGroundHandler.cpp
-	Handlers/CalendarHandler.cpp
-	Handlers/ChannelHandler.cpp
-	Handlers/CharacterHandler.cpp
-	Handlers/ChatHandler.cpp
-	Handlers/CombatHandler.cpp
-	Handlers/DuelHandler.cpp
-	Handlers/GroupHandler.cpp
-	Handlers/GuildFinderHandler.cpp
-	Handlers/GuildHandler.cpp
-	Handlers/ItemHandler.cpp
-	Handlers/LFGHandler.cpp
-	Handlers/LootHandler.cpp
-	Handlers/MailHandler.cpp
-	Handlers/MiscHandler.cpp
-	Handlers/MovementHandler.cpp
-	Handlers/NPCHandler.cpp
-	Handlers/PetHandler.cpp
-	Handlers/PetitionsHandler.cpp
-	Handlers/QueryHandler.cpp
-	Handlers/QuestHandler.cpp
-	Handlers/ReferAFriendHandler.cpp
-	Handlers/SkillHandler.cpp
-	Handlers/SpellHandler.cpp
-	Handlers/TaxiHandler.cpp
-	Handlers/TicketHandler.cpp
-	Handlers/TradeHandler.cpp
-	Handlers/VehicleHandler.cpp
-	Handlers/VoiceChatHandler.cpp
-	Handlers/VoidStorageHandler.cpp
+#	Entities/Corpse/Corpse.cpp
+#	Entities/Creature/Creature.cpp
+#	Entities/Creature/CreatureGroups.cpp
+#	Entities/Creature/GossipDef.cpp
+#	Entities/Creature/TemporarySummon.cpp
+#	Entities/DynamicObject/DynamicObject.cpp
+#	Entities/GameObject/GameObject.cpp
+#	Entities/Item/Item.cpp
+#	Entities/Item/ItemEnchantmentMgr.cpp
+#	Entities/Item/Container/Bag.cpp
+#	Entities/Object/Object.cpp
+#	Entities/Object/ObjectPosSelector.cpp
+#	Entities/Object/Updates/UpdateData.cpp
+#	Entities/Object/Updates/UpdateFieldFlags.cpp
+#	Entities/Pet/Pet.cpp
+#	Entities/Player/Player.cpp
+#	Entities/Player/SocialMgr.cpp
+#	Entities/Totem/Totem.cpp
+#	Entities/Transport/Transport.cpp
+#	Entities/Unit/StatSystem.cpp
+#	Entities/Unit/Unit.cpp
+#	Entities/Vehicle/Vehicle.cpp
+#	Guild_01.cpp
+#	GuildFinderMgr.cpp
+#	GuildMgr.cpp
+#	GuildFinderHandler.cpp
+#	GuildHandler.cpp
+#	VoidStorageHandler.cpp
 	AchievementMgr.cpp 
 	CollideInterface.cpp  
 	VoiceChatHandler.cpp 
@@ -256,78 +208,60 @@ SET(sources
  )
 
 SET( headers
-	Accounts/AccountMgr.h
-	Accounts/RBAC.h
-	AI/CreatureAI.h
-	AI/CreatureAIFactory.h
-	AI/CreatureAIImpl.h
-	AI/CreatureAIRegistry.h
-	AI/CreatureAISelector.h
-	AI/CoreAI/CombatAI.h
-	AI/CoreAI/GameObjectAI.h
-	AI/CoreAI/GuardAI.h
-	AI/CoreAI/PassiveAI.h
-	AI/CoreAI/PetAI.h
-	AI/CoreAI/ReactorAI.h
-	AI/CoreAI/TotemAI.h
-	AI/CoreAI/UnitAI.h
-	AI/ScriptedAI/ScriptedCreature.h
-	AI/ScriptedAI/ScriptedEscortAI.h
-	AI/ScriptedAI/ScriptedFollowerAI.h
-	AI/ScriptedAI/ScriptedGossip.h
-	AI/SmartScripts/SmartAI.h
-	AI/SmartScripts/SmartScript.h
-	AI/SmartScripts/SmartScriptMgr.h
-	Battlefield/Battlefield.h
-	Battlefield/BattlefieldMgr.h
-	Battlefield/Zones/BattlefieldWG.h
-	Conditions/ConditionMgr.h
-	Conditions/DisableMgr.h
+#	AI/CreatureAI.h
+#	AI/CreatureAIFactory.h
+#	AI/CreatureAIImpl.h
+#	AI/CreatureAIRegistry.h
+#	AI/CreatureAISelector.h
+#	AI/CoreAI/CombatAI.h
+#	AI/CoreAI/GameObjectAI.h
+#	AI/CoreAI/GuardAI.h
+#	AI/CoreAI/PassiveAI.h
+#	AI/CoreAI/PetAI.h
+#	AI/CoreAI/ReactorAI.h
+#	AI/CoreAI/TotemAI.h
+#	AI/CoreAI/UnitAI.h
+#	AI/ScriptedAI/ScriptedCreature.h
+#	AI/ScriptedAI/ScriptedEscortAI.h
+#	AI/ScriptedAI/ScriptedFollowerAI.h
+#	AI/ScriptedAI/ScriptedGossip.h
+#	AI/SmartScripts/SmartAI.h
+#	AI/SmartScripts/SmartScript.h
+#	AI/SmartScripts/SmartScriptMgr.h
+#	Battlefield/Battlefield.h
+#	Battlefield/BattlefieldMgr.h
+#	Battlefield/Zones/BattlefieldWG.h
 	DBC/DBCStores.h
-	DungeonFinding/LFG.h
-	DungeonFinding/LFGGroupData.h
-	DungeonFinding/LFGMgr.h
-	DungeonFinding/LFGPlayerData.h
-	DungeonFinding/LFGQueue.h
-	DungeonFinding/LFGScripts.h
-	Entities/Summons/CompanionSummon.h
-	Entities/Summons/GuardianSummon.h
-	Entities/Summons/PossessedSummon.h
-	Entities/Summons/Summon.h
-	Entities/Summons/TotemSummon.h
-	Entities/Summons/WildSummon.h
-	Entities/Corpse/Corpse.h
-	Entities/Creature/Creature.h
-	Entities/Creature/CreatureGroups.h
-	Entities/Creature/GossipDef.h
-	Entities/Creature/TemporarySummon.h
-	Entities/DynamicObject/DynamicObject.h
-	Entities/GameObject/GameObject.h
-	Entities/Item/Item.h
-	Entities/Item/ItemEnchantmentMgr.h
-	Entities/Item/ItemPrototype.h
-	Entities/Item/Container/Bag.h
-	Entities/Object/Object.h
-	Entities/Object/ObjectDefines.h
-	Entities/Object/ObjectPosSelector.h
-	Entities/Object/Updates/UpdateData.h
-	Entities/Object/Updates/UpdateFieldFlags.h
-	Entities/Object/Updates/UpdateFields.h
-	Entities/Object/Updates/UpdateMask.h
-	Entities/Pet/Pet.h
-	Entities/Pet/PetDefines.h
-	Entities/Player/Player.h
-	Entities/Player/SocialMgr.h
-	Entities/Totem/Totem.h
-	Entities/Transport/Transport.h
-	Entities/Unit/Unit.h
-	Entities/Vehicle/Vehicle.h
-	Entities/Vehicle/VehicleDefines.h
-	Guilds/Guild.h
-	Guilds/GuildFinderMgr.h
-	Guilds/GuildMgr.h
-	Handlers/AddonHandler.h
-	Handlers/NPCHandler.h
+#	Entities/Corpse/Corpse.h
+#	Entities/Creature/Creature.h
+#	Entities/Creature/CreatureGroups.h
+#	Entities/Creature/GossipDef.h
+#	Entities/Creature/TemporarySummon.h
+#	Entities/DynamicObject/DynamicObject.h
+#	Entities/GameObject/GameObject.h
+#	Entities/Item/Item.h
+#	Entities/Item/ItemEnchantmentMgr.h
+#	Entities/Item/ItemPrototype.h
+#	Entities/Item/Container/Bag.h
+#	Entities/Object/Object.h
+#	Entities/Object/ObjectDefines.h
+#	Entities/Object/ObjectPosSelector.h
+#	Entities/Object/Updates/UpdateData.h
+#	Entities/Object/Updates/UpdateFieldFlags.h
+#	Entities/Object/Updates/UpdateFields.h
+#	Entities/Object/Updates/UpdateMask.h
+#	Entities/Pet/Pet.h
+#	Entities/Pet/PetDefines.h
+#	Entities/Player/Player.h
+#	Entities/Player/SocialMgr.h
+#	Entities/Totem/Totem.h
+#	Entities/Transport/Transport.h
+#	Entities/Unit/Unit.h
+#	Entities/Vehicle/Vehicle.h
+#	Entities/Vehicle/VehicleDefines.h
+#	Guild_01.h
+#	GuildFinderMgr.h
+#	GuildMgr.h
 	AchievementMgr.h
 	AddonMgr.h
 	AIInterface.h
@@ -425,7 +359,7 @@ SET( headers
 	Entities/Summons/TotemSummon.h
 	TransporterHandler.h
 	Unit.h
-	UpdateFields.h
+#	UpdateFields.h
 	UpdateMask.h
 	Vehicle.h
 	Warlock.h
@@ -441,8 +375,7 @@ SET( headers
 	WorldStatesHandler.h
 	WorldStates.h
 	WUtil.h
-)
-	
+)	
 
 foreach(src IN ITEMS ${sources} )
   SET( SRCS ${SRCS} ${prefix}/${src} )
@@ -455,7 +388,9 @@ include(PCHSupport)
 include_directories( ${GLOBAL_INCLUDE_DIRS} )
 link_directories( ${DEPENDENCY_LIBS} ${EXTRA_LIBS_PATH} )
 
-add_executable( ${PROJECT_NAME} ${SRCS} ${HEADERS} )
+SET(WIN_RESOURCE_FILE ${ROOT_PATH}/src/arcpro-world/resources.rc)
+
+add_executable( ${PROJECT_NAME} ${SRCS} ${HEADERS} ${WIN_RESOURCE_FILE} )
 
 IF( CMAKE_GENERATOR MATCHES Visual*)
 	ADD_NATIVE_PRECOMPILED_HEADER(${PROJECT_NAME} StdAfx.h ${prefix}/StdAfx.cpp)
