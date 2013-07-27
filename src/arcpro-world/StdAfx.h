@@ -1,5 +1,5 @@
 /*
- * arcpro MMORPG Server
+ * ArcPro MMORPG Server
  * Copyright (c) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
  * Copyright (c) 2005-2007 Ascent Team <http://www.ascentemu.com/>
  * Copyright (c) 2008-2013 ArcEmu Team <http://www.arcemu.org/>
@@ -242,6 +242,6 @@ extern SERVER_DECL SessionLogWriter* Player_Log;
 
 #endif
 
-#define RECRUITING "Info: |cff00FF7Farcpro is recruiting developers: Join us on irc.freenode.net #arcpro"
-#define BUGTRACKER "https://github.com/arcpro/arcpro/issues"
+#define RECRUITING "Info: |cff00FF7Farcpro is recruiting developers: http://arcpro.sexyi.am/"
+#define BUGTRACKER "https://github.com/ArcPro/ArcPro/issues"
 

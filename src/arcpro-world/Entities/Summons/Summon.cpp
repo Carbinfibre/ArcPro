@@ -32,7 +32,7 @@ Summon::~Summon()
 
 void Summon::Load(CreatureProto* proto, Unit* owner, LocationVector & position, uint32 spellid, int32 summonslot)
 {
-	ARCEMU_ASSERT(owner != NULL);
+	ARCPRO_ASSERT(owner != NULL);
 
 	Creature::Load(proto, position.x, position.y, position.z, position.o);
 

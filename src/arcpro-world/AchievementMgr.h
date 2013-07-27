@@ -107,7 +107,7 @@ enum AchievementCriteriaCondition
     ACHIEVEMENT_CRITERIA_CONDITION_MAP       = 3,  //!< #3# requires you to be on specific map
     ACHIEVEMENT_CRITERIA_CONDITION_NO_LOOSE  = 4,  //!< #4# only used in "Win 10 arenas without losing"
     ACHIEVEMENT_CRITERIA_CONDITION_UNK2      = 9,  //!< #9# unk
-    ACHIEVEMENT_CRITERIA_CONDITION_UNK3      = 13, //!< #13# unk
+    ACHIEVEMENT_CRITERIA_CONDITION_UNK3      = 13 //!< #13# unk
 };
 
 /**
@@ -214,7 +214,7 @@ enum AchievementCriteriaTypes
     ACHIEVEMENT_CRITERIA_TYPE_EARN_HONORABLE_KILL = 113,
     ACHIEVEMENT_CRITERIA_TYPE_ACCEPTED_SUMMONINGS = 114,
     // 0..114 => 124 criteria types total : Alleycat - We need to get the new Acheivements!
-    ACHIEVEMENT_CRITERIA_TYPE_TOTAL = 124,
+    ACHIEVEMENT_CRITERIA_TYPE_TOTAL = 124
 };
 
 /**

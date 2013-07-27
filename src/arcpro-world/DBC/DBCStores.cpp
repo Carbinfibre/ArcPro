@@ -88,11 +88,11 @@ SERVER_DECL DBCStorage<SpellShapeshiftForm> dbcSpellShapeshiftForm;
 SERVER_DECL DBCStorage<QuestXP> dbcQuestXP;
 SERVER_DECL DBCStorage<MailTemplateEntry> dbcMailTemplateEntry;
 SERVER_DECL DBCStorage<WMOAreaTableEntry> dbcWMOAreaTable;
-SERVER_DECL DBCStorage< SummonPropertiesEntry > dbcSummonProperties;
-SERVER_DECL DBCStorage< NameGenEntry > dbcNameGen;
-SERVER_DECL DBCStorage< LFGDungeonEntry > dbcLFGDungeon;
-SERVER_DECL DBCStorage< VehicleEntry > dbcVehicle;
-SERVER_DECL DBCStorage< VehicleSeatEntry > dbcVehicleSeat;
+SERVER_DECL DBCStorage<SummonPropertiesEntry> dbcSummonProperties;
+SERVER_DECL DBCStorage<NameGenEntry> dbcNameGen;
+SERVER_DECL DBCStorage<LFGDungeonEntry> dbcLFGDungeon;
+SERVER_DECL DBCStorage<VehicleEntry> dbcVehicle;
+SERVER_DECL DBCStorage<VehicleSeatEntry> dbcVehicleSeat;
 
 const char* WorldMapOverlayStoreFormat = "nxiiiixxxxxxxxxxx";
 const char* BarberShopStyleEntryFormat = "nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxi";

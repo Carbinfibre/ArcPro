@@ -19,9 +19,9 @@
  *
  */
 
-#include "Creature.h"
+#include "CoreAI/Creature.h"
 #include "CreatureAISelector.h"
-#include "PassiveAI.h"
+#include "CoreAI/PassiveAI.h"
 
 #include "MovementGenerator.h"
 #include "Pet.h"

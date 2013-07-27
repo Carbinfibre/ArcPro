@@ -52,7 +52,7 @@ void ConsoleThread::terminate()
 	LOG_BASIC("Waiting for console thread to terminate....");
 	while(m_isRunning)
 	{
-		Arcpro::Sleep(100);
+		arcpro::Sleep(100);
 	}
 	LOG_BASIC("Console shut down.");
 }

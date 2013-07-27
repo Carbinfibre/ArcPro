@@ -2022,14 +2022,14 @@ extern SERVER_DECL DBCStorage<AreaTriggerEntry> dbcAreaTrigger;
 extern SERVER_DECL DBCStorage<ScalingStatDistributionEntry> dbcScalingStatDistribution;
 extern SERVER_DECL DBCStorage<ScalingStatValuesEntry> dbcScalingStatValues;
 extern SERVER_DECL DBCStorage<ItemLimitCategoryEntry> dbcItemLimitCategory;
-extern SERVER_DECL DBCStorage< QuestXP > dbcQuestXP;
+extern SERVER_DECL DBCStorage<QuestXP> dbcQuestXP;
 extern SERVER_DECL DBCStorage<MailTemplateEntry> dbcMailTemplateEntry;
 extern SERVER_DECL DBCStorage<WMOAreaTableEntry> dbcWMOAreaTable;
-extern SERVER_DECL DBCStorage< SummonPropertiesEntry > dbcSummonProperties;
-extern SERVER_DECL DBCStorage< NameGenEntry > dbcNameGen;
-extern SERVER_DECL DBCStorage< LFGDungeonEntry > dbcLFGDungeon;
-extern SERVER_DECL DBCStorage< VehicleEntry > dbcVehicle;
-extern SERVER_DECL DBCStorage< VehicleSeatEntry > dbcVehicleSeat;
+extern SERVER_DECL DBCStorage<SummonPropertiesEntry> dbcSummonProperties;
+extern SERVER_DECL DBCStorage<NameGenEntry> dbcNameGen;
+extern SERVER_DECL DBCStorage<LFGDungeonEntry> dbcLFGDungeon;
+extern SERVER_DECL DBCStorage<VehicleEntry> dbcVehicle;
+extern SERVER_DECL DBCStorage<VehicleSeatEntry> dbcVehicleSeat;
 
 bool LoadDBCs();
 

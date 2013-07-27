@@ -137,7 +137,7 @@ bool Master::Run(int argc, char** argv)
 		switch(c)
 		{
 			case 'c':
-				config_file = new char[strlen(arcemu_optarg)];
+				config_file = new char[strlen(arcpro_optarg)];
 				strcpy(config_file, arcpro_optarg);
 				break;
 
@@ -357,7 +357,7 @@ bool Master::Run(int argc, char** argv)
 
 
 	/* write pid file */
-	FILE* fPid = fopen("arcpro.pid", "w");
+	FILE* fPid = fopen("ArcPro.pid", "w");
 	if(fPid)
 	{
 		uint32 pid;
@@ -469,7 +469,7 @@ bool Master::Run(int argc, char** argv)
 		if(50 > etime)
 		{
 
-			Arcpro::Sleep(50 - etime);
+			arcpro::Sleep(50 - etime);
 
 		}
 	}
@@ -488,7 +488,7 @@ bool Master::Run(int argc, char** argv)
 	{
 		Log.Notice("Shutdown", "Waiting for loot to finish loading...");
 		while(lootmgr.is_loading)
-			Arcpro::Sleep(100);
+			arcpro::Sleep(100);
 	}
 
 	// send a query to wake it up if its inactive
@@ -551,7 +551,7 @@ bool Master::Run(int argc, char** argv)
 	delete Player_Log;
 
 	// remove pid
-	remove("arcpro.pid");
+	remove("ArcPro.pid");
 
 	Log.Success("Shutdown", "Shutdown complete.");
 	Log.Close();

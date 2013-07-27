@@ -1156,7 +1156,7 @@ void TaskList::wait()
 			}
 		}
 		queueLock.Release();
-		Arcpro::Sleep(20);
+		arcpro::Sleep(20);
 	}
 }
 
@@ -1187,7 +1187,7 @@ bool TaskExecutor::run()
 			delete t;
 		}
 		else
-			Arcpro::Sleep(20);
+			arcpro::Sleep(20);
 	}
 
 	THREAD_HANDLE_CRASH
@@ -1199,7 +1199,7 @@ void TaskList::waitForThreadsToExit()
 {
 	while(thread_count.GetVal())
 	{
-		Arcpro::Sleep(20);
+		arcpro::Sleep(20);
 	}
 }
 

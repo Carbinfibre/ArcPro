@@ -111,40 +111,71 @@ bool ShowCompletedAchievement(uint32 achievementID, const Player* plr)
 	switch(achievementID)
 	{
 		case  457: // Realm First! Level 80
-		case  467: // Realm First! Level 80 Shaman
+		case  461: // Realm First! Level 80 Death Knight
 		case  466: // Realm First! Level 80 Druid
+		case  462: // Realm First! Level 80 Hunter
+		case  460: // Realm First! Level 80 Mage
 		case  465: // Realm First! Level 80 Paladin
 		case  464: // Realm First! Level 80 Priest
-		case  463: // Realm First! Level 80 Warlock
-		case  462: // Realm First! Level 80 Hunter
-		case  461: // Realm First! Level 80 Death Knight
-		case  460: // Realm First! Level 80 Mage
-		case  459: // Realm First! Level 80 Warrior
 		case  458: // Realm First! Level 80 Rogue
-		case 1404: // Realm First! Level 80 Gnome
+		case  467: // Realm First! Level 80 Shaman
+		case  463: // Realm First! Level 80 Warlock
+		case  459: // Realm First! Level 80 Warrior
 		case 1405: // Realm First! Level 80 Blood Elf
 		case 1406: // Realm First! Level 80 Draenei
 		case 1407: // Realm First! Level 80 Dwarf
+		case 1413: // Realm First! Level 80 Forsaken
+		case 1404: // Realm First! Level 80 Gnome
 		case 1408: // Realm First! Level 80 Human
 		case 1409: // Realm First! Level 80 Night Elf
 		case 1410: // Realm First! Level 80 Orc
 		case 1411: // Realm First! Level 80 Tauren
 		case 1412: // Realm First! Level 80 Troll
-		case 1413: // Realm First! Level 80 Forsaken
+
+		case 4999: // Realm First! Level 85
+		case 5005: // Realm First! Level 85 Death Knight
+		case 5000: // Realm First! Level 85 Druid
+		case 5004: // Realm First! Level 85 Hunter
+		case 5006: // Realm First! Level 85 Mage
+		case 5001: // Realm First! Level 85 Paladin
+		case 5002: // Realm First! Level 85 Priest
+		case 5008: // Realm First! Level 85 Rogue
+		case 4998: // Realm First! Level 85 Shaman
+		case 5003: // Realm First! Level 85 Warlock
+		case 5007: // Realm First! Level 85 Warrior
 		case 1415: // Realm First! Grand Master Alchemist
+		case 1420: // Realm First! Grand Master Angler
+		case 5395: // Realm First! Grand Master Archaeologist
 		case 1414: // Realm First! Grand Master Blacksmith
-		case 1416: // Realm First! Cooking Grand Master
+		case 1416: // Realm First! Grand Master Cook
 		case 1417: // Realm First! Grand Master Enchanter
 		case 1418: // Realm First! Grand Master Engineer
-		case 1419: // Realm First! First Aid Grand Master
-		case 1420: // Realm First! Grand Master Angler
 		case 1421: // Realm First! Grand Master Herbalist
-		case 1422: // Realm First! Grand Master Scribe
 		case 1423: // Realm First! Grand Master Jewelcrafter
 		case 1424: // Realm First! Grand Master Leatherworker
+		case 1419: // Realm First! Grand Master Medic
 		case 1425: // Realm First! Grand Master Miner
+		case 1422: // Realm First! Grand Master Scribe
 		case 1426: // Realm First! Grand Master Skinner
 		case 1427: // Realm First! Grand Master Tailor
+		case 5381: // Realm First! Illustrious Alchemist
+		case 5387: // Realm First! Illustrious Angler
+		case 5396: // Realm First! Illustrious Archaeologist
+		case 5382: // Realm First! Illustrious Blacksmith
+		case 5383: // Realm First! Illustrious Cook
+		case 5384: // Realm First! Illustrious Enchanter
+		case 5385: // Realm First! Illustrious Engineer
+		case 5388: // Realm First! Illustrious Herbalist
+		case 5390: // Realm First! Illustrious Jewelcrafter
+		case 5391: // Realm First! Illustrious Leatherworker
+		case 5386: // Realm First! Illustrious Medic
+		case 5392: // Realm First! Illustrious Miner
+		case 5389: // Realm First! Illustrious Scribe
+		case 5393: // Realm First! Illustrious Skinner
+		case 5394: // Realm First! Illustrious Tailor
+//		case 5407: // Realm First! Guild Level 25
+//		case 5408: // Realm First! Working as a Team
+		case 4078: // Realm First! Grand Crusader
 		case 1463: // Realm First! Northrend Vanguard: First player on the realm to gain exalted reputation with the Argent Crusade, Wyrmrest Accord, Kirin Tor and Knights of the Ebon Blade.
 			{
 				QueryResult* achievementResult = CharacterDatabase.Query("SELECT guid FROM character_achievement WHERE achievement=%u ORDER BY date LIMIT 1", achievementID);
@@ -171,6 +202,23 @@ bool ShowCompletedAchievement(uint32 achievementID, const Player* plr)
 //		case 1400: // Realm First! Magic Seeker: Participated in the realm first defeat of Malygos on Heroic Difficulty.
 //		case  456: // Realm First! Obsidian Slayer: Participated in the realm first defeat of Sartharion the Onyx Guardian on Heroic Difficulty.
 //		case 1402: // Realm First! Conqueror of Naxxramas: Participated in the realm first defeat of Kel'Thuzad on Heroic Difficulty in Naxxramas.
+//		case 5410: // Realm First! Al'Akir
+//		case 3259: // Realm First! Celestial Defender
+//		case 3117: // Realm First! Death's Demise
+//		case 6126: // Realm First! Deathwing
+//		case 4576: // Realm First! Fall of the Lich King
+//		case 1400: // Realm First! Magic Seeker
+//		case 5409: // Realm First! Nefarian
+//		case 5985: // Realm First! Ragnaros
+//		case 5411: // Realm First! Sinestra
+//		case 
+//		case 
+//		case 
+//		case 
+//		case 
+//		case 
+//		case 
+//		case 
 		default:
 			break;
 	}
@@ -745,7 +793,7 @@ void AchievementMgr::UpdateAchievementCriteria(AchievementCriteriaTypes type, in
 								UpdateCriteriaProgress(achievementCriteria, 1);
 							}
 							break;
-// TODO: More complicated achievements: time limits, group size limits, other criteria...
+// TODO: More complicated achievements: Time limits, group size limits, other criteria...
 						case 1870: // Heroic: A Poke In The Eye
 							// Defeat Malygos on Heroic Difficulty with fewer than 21.
 						case 2056: // Volunteer Work

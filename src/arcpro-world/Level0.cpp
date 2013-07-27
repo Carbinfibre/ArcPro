@@ -45,7 +45,7 @@ bool ChatHandler::ShowHelpForCommand(WorldSession* m_session, ChatCommand* table
 
 		if(table[i].Help == "")
 		{
-			SystemMessage(m_session, "There is no help for that command");
+			SystemMessage(m_session, "There is no help for that command.");
 			return true;
 		}
 

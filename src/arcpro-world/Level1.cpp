@@ -594,7 +594,7 @@ bool ChatHandler::HandleModifySpeedCommand(const char* args, WorldSession* m_ses
 
 	if(Speed > 255 || Speed < 1)
 	{
-		RedSystemMessage(m_session, "Incorrect value. Range is 1..255");
+		RedSystemMessage(m_session, "Incorrect value. Range is 1 to 255");
 		return true;
 	}
 

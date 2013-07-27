@@ -190,7 +190,7 @@ void LogonCommHandler::Connect(LogonServer* server)
 			return;
 		}
 
-		Arcpro::Sleep(50);
+		arcpro::Sleep(50);
 	}
 
 	if(conn->authenticated != 1)
@@ -225,14 +225,14 @@ void LogonCommHandler::Connect(LogonServer* server)
 			conn->Disconnect();
 			break;
 		}
-		Arcpro::Sleep(50);
+		arcpro::Sleep(50);
 	}
 
 	if(!server->Registered)
 		return;
 
 	// Wait for all realms to register
-	Arcpro::Sleep(200);
+	arcpro::Sleep(200);
 
 	Log.Success("LogonCommClient", "Logonserver latency is %ums.", conn->latency);
 }

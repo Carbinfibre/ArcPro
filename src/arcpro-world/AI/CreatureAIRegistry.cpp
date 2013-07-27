@@ -19,18 +19,18 @@
  *
  */
 
-#include "PassiveAI.h"
-#include "ReactorAI.h"
-#include "CombatAI.h"
-#include "GuardAI.h"
-#include "PetAI.h"
-#include "TotemAI.h"
+#include "CoreAI/PassiveAI.h"
+#include "CoreAI/ReactorAI.h"
+#include "CoreAI/CombatAI.h"
+#include "CoreAI/GuardAI.h"
+#include "CoreAI/PetAI.h"
+#include "CoreAI/TotemAI.h"
 #include "RandomMovementGenerator.h"
 #include "MovementGeneratorImpl.h"
 #include "CreatureAIRegistry.h"
 #include "WaypointMovementGenerator.h"
 #include "CreatureAIFactory.h"
-#include "SmartAI.h"
+#include "SmartScripts/SmartAI.h"
 
 namespace AIRegistry
 {

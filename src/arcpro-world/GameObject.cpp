@@ -875,7 +875,7 @@ void GameObject::Damage( uint32 damage, uint64 AttackerGUID, uint64 ControllerGU
 		CALL_GO_SCRIPT_EVENT( this, OnDamaged )( damage );
 	}
 	
-	uint8 animprogress = static_cast< uint8 >( Arcpro::round( hitpoints/ float( maxhitpoints ) ) * 255 );
+	uint8 animprogress = static_cast< uint8 >( arcpro::round( hitpoints/ float( maxhitpoints ) ) * 255 );
 	SetAnimProgress( animprogress );
 	SendDamagePacket( damage, AttackerGUID, ControllerGUID, SpellID );
 }

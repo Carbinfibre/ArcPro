@@ -309,6 +309,7 @@ bool ChatHandler::HandleLearnCommand(const char* args, WorldSession* m_session)
 			{ 0 },		// TROLL
 			{ 34767, 34769, 31892, 53736, 0 },		// BLOODELF  Summon Charger, Summon Warhorse, Seal of Blood, Seal of Corruption
 			{ 23214, 13819, 31801, 53720, 0 },		// DRAENEI  Charger, Warhorse, Seal of Vengeance, Seal of Martyr
+			// To do: Worgen's + Goblin's
 		};
 
 		static uint32 shamanspellarray[RACE_DRAENEI + 1][2] =
@@ -324,6 +325,7 @@ bool ChatHandler::HandleLearnCommand(const char* args, WorldSession* m_session)
 			{ 2825, 0 },		// TROLL Bloodlust
 			{ 0 },		// BLOODELF
 			{ 32182, 0 },		// DRAENEI Heroism
+			// To do: Worgen's + Goblin's
 		};
 
 		static uint32 magespellarray[RACE_DRAENEI + 1][13] =
@@ -339,6 +341,7 @@ bool ChatHandler::HandleLearnCommand(const char* args, WorldSession* m_session)
 			{ 3563, 3566, 3567, 11417, 11418, 11420, 32267, 32272, 35715, 35717, 49358, 49361, 0 },		// TROLL
 			{ 3563, 3566, 3567, 11417, 11418, 11420, 32267, 32272, 35715, 35717, 49358, 49361, 0 },		// BLOODELF
 			{ 3561, 3562, 3565, 10059, 11416, 11419, 32266, 32271, 33690, 33691, 49359, 49360, 0 },		// DRAENEI
+			// To do: Worgen's + Goblin's
 		};
 
 		uint32 r = plr->getRace();

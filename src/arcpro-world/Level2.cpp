@@ -35,7 +35,7 @@ bool ChatHandler::HandleResetReputationCommand(const char* args, WorldSession* m
 	}
 
 	plr->_InitialReputation();
-	SystemMessage(m_session, "Done. Relog for changes to take effect.");
+	SystemMessage(m_session, "Done. Re-login for changes to take effect.");
 	sGMLog.writefromsession(m_session, "used reset reputation for %s", plr->GetName());
 	return true;
 }
@@ -47,7 +47,7 @@ bool ChatHandler::HandleInvincibleCommand(const char* args, WorldSession* m_sess
 	if(chr)
 	{
 		chr->bInvincible = !chr->bInvincible;
-		snprintf(msg, 100, "Invincibility is now %s", chr->bInvincible ? "ON. You may have to leave and re-enter this zone for changes to take effect." : "OFF. Exit and re-enter this zone for this change to take effect.");
+		snprintf(msg, 100, "Invincibility is now %s", chr->bInvincible ? "ON. You may have to leave and re-enter this zone for changes to take effect." : "OFF. You may have to leave and re-enter this zone for changes to take effect.");
 	}
 	else
 	{
@@ -498,7 +498,7 @@ bool ChatHandler::HandleCastSpellCommand(const char* args, WorldSession* m_sessi
 		target = getSelectedCreature(m_session, false);
 	if(!target)
 	{
-		RedSystemMessage(m_session, "Must select a char or creature.");
+		RedSystemMessage(m_session, "Must select a character or creature.");
 		return false;
 	}
 
@@ -539,7 +539,7 @@ bool ChatHandler::HandleCastSpellNECommand(const char* args, WorldSession* m_ses
 		target = getSelectedCreature(m_session, false);
 	if(!target)
 	{
-		RedSystemMessage(m_session, "Must select a char or creature.");
+		RedSystemMessage(m_session, "Must select a character or creature.");
 		return false;
 	}
 
@@ -599,7 +599,7 @@ bool ChatHandler::HandleCastSelfCommand(const char* args, WorldSession* m_sessio
 		target = getSelectedCreature(m_session, false);
 	if(!target)
 	{
-		RedSystemMessage(m_session, "Must select a char or creature.");
+		RedSystemMessage(m_session, "Must select a character or creature.");
 		return false;
 	}
 
@@ -748,7 +748,7 @@ bool ChatHandler::HandleGOSelect(const char* args, WorldSession* m_session)
 
 	if(GObj == NULL)
 	{
-		RedSystemMessage(m_session, "No inrange GameObject found.");
+		RedSystemMessage(m_session, "No in-range GameObject found.");
 		return true;
 	}
 

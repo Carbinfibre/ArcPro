@@ -1318,7 +1318,7 @@ bool MapMgr::Do()
 		if(exec_time < MAP_MGR_UPDATE_PERIOD)
 		{
 
-			Arcpro::Sleep(MAP_MGR_UPDATE_PERIOD - exec_time);
+			arcpro::Sleep(MAP_MGR_UPDATE_PERIOD - exec_time);
 
 		}
 
