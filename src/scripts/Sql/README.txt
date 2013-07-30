@@ -1,1 +1,0 @@
-Execute arcscripts_full.sql in your ArcPro World Database.
