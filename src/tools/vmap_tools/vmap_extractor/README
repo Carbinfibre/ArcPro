@@ -1,0 +1,63 @@
+/*
+ * ArcPro MMORPG Server
+ * Copyright (C) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
+ * Copyright (C) 2008-2013 ArcEmu Team <http://www.arcemu.org/>
+ * Copyright (C) 2005-2011 MaNGoS <http://getmangos.com/>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+ 
+Linux:
+
+1. Building
+
+	Because vmap_extractor depends on libmpq for reading mpq files, you will have
+	to build libmpq prior to vmap_extractor. Therefore cd to dep/libmpq and execute:
+
+	$ ./autogen.sh
+	$ ./configure
+	$ make
+
+	After that, cd to contrib/vmap_extractor_v2/ and execute:
+
+	$ cmake .
+	$ make
+
+	You should now have an executable file at vmapextract/vmapextractor
+
+2. Extracting
+
+	Use the created executable to extract model information. Change the data path if
+	needed.
+
+	$ vmapextract/vmapextractor -d /mnt/windows/games/wow/Data/
+
+	Resulting files will be in ./Buildings
+
+###########################
+Windows:
+
+1. Building
+
+	Just build the solution in contrib\vmap_extractor_v2\win
+	Resulting binaries will be in contrib\vmap_extractor_v2\bin\$(PlatformName)_$(ConfigurationName)
+
+2. Extracting
+
+	Use the created executable (from command prompt) to extract model information.
+	It should find the data path for your client installation through the windows registry,
+	but the data path can be specified with the -d option.
+
+	Resulting files will be in .\Buildings

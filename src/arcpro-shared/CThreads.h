@@ -1,0 +1,82 @@
+/*
+ * ArcPro MMORPG Server
+ * Copyright (c) 2011-2013 ArcPro Speculation <http://arcpro.sexyi.am/>
+ * Copyright (c) 2008-2013 ArcEmu Team <http://www.arcemu.org/>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+// Class CThread - Base class for all threads in the
+// server, and allows for easy management by ThreadMgr.
+
+#ifndef _MAPUPDATER_H
+#define _MAPUPDATER_H
+
+class MapMgr;
+class Object;
+class Player;
+class WorldSession;
+class Creature;
+class GameObject;
+
+#define MAPMGR_UPDATEOBJECT_LOOP_DELAY 100
+#define MAPMGR_SESSION_UPDATE_DELAY	50
+
+#define MAPMGR_UPDATE_DELAY			100
+
+enum CThreadState
+{
+    THREADSTATE_TERMINATE = 0,
+    THREADSTATE_PAUSED	= 1,
+    THREADSTATE_SLEEPING  = 2,
+    THREADSTATE_BUSY	  = 3,
+    THREADSTATE_AWAITING  = 4,
+};
+
+
+struct NameTableEntry;
+
+class SERVER_DECL CThread : public ThreadBase
+{
+	public:
+		CThread();
+		~CThread();
+
+		ARCPRO_INLINE void SetThreadState(CThreadState thread_state) { ThreadState.SetVal(thread_state); }
+		ARCPRO_INLINE CThreadState GetThreadState()
+		{
+			unsigned long val = ThreadState.GetVal();
+			return static_cast<CThreadState>(val);
+		}
+		int GetThreadId() { return ThreadId; }
+		time_t GetStartTime() { return start_time; }
+		virtual bool run();
+		virtual void OnShutdown();
+
+	protected:
+		CThread & operator=(CThread & other)
+		{
+			this->start_time = other.start_time;
+			this->ThreadId = other.ThreadId;
+			this->ThreadState.SetVal(other.ThreadState.GetVal());
+			return *this;
+		}
+
+		Arcpro::Threading::AtomicCounter ThreadState;
+		time_t start_time;
+		int ThreadId;
+};
+
+#endif
