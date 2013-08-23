@@ -11,6 +11,7 @@ SET( prefix ${SCRIPTS_PATH}/${PROJECT_NAME} )
 #sources -contains source files for our library.
 SET( sources
 Setup.cpp
+childrens_week.cpp
 Event_Halloween.cpp
 Event_WinterVeil.cpp
 ../Common/Base.cpp )
