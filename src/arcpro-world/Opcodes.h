@@ -838,6 +838,7 @@ enum Opcodes
     CMSG_GM_UPDATE_TICKET_STATUS                    = 0x327,	// GM client only or not implemented
     SMSG_GM_TICKET_STATUS_UPDATE                    = 0x328,	// implemented
     MSG_SET_DUNGEON_DIFFICULTY                      = 0x329,	// implemented
+    MSG_SET_RAID_DIFFICULTY                     	= 0x0B5E8,	// Build 13623
     CMSG_GMSURVEY_SUBMIT                            = 0x32A,	// implemented
     SMSG_UPDATE_INSTANCE_OWNERSHIP                  = 0x32B,	// implemented
     CMSG_IGNORE_KNOCKBACK_CHEAT                     = 0x32C,	// GM client only

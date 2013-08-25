@@ -32,7 +32,6 @@ WorldSession::WorldSession(uint32 id, string Name, WorldSocket* sock):
 	m_currMsTime(getMSTime()),
 	bDeleted(false),
 	m_moveDelayTime(0),
-	m_clientTimeDelay(0),
 	m_bIsWLevelSet(false),
 	_player(NULL),
 	_socket(sock),
@@ -46,15 +45,11 @@ WorldSession::WorldSession(uint32 id, string Name, WorldSocket* sock):
 	_loggingOut(false),
 	LoggingOut(false),
 	instanceId(0),
+	movement_info(),
 	_updatecount(0), floodLines(0), floodTime(UNIXTIME), language(0), m_muted(0)
 {
-	memset(movement_packet, 0, sizeof(movement_packet));
-
-	movement_info.redirectVelocity = 0;
-
 	for(uint8 x = 0; x < 8; x++)
 		sAccountData[x].data = NULL;
-
 }
 
 WorldSession::~WorldSession()
@@ -139,9 +134,12 @@ int WorldSession::Update(uint32 InstanceID)
 		ARCPRO_ASSERT(packet != NULL);
 
 		if(packet->GetOpcode() >= NUM_MSG_TYPES)
+		{
 			LOG_DETAIL
-			("[Session] Received out of range packet with opcode 0x%.4X",
+//			printf
+			("[Session] Received out of range packet with opcode 0x%.4X",//\n",
 			 packet->GetOpcode());
+		}
 		else
 		{
 			Handler = &WorldPacketHandlers[packet->GetOpcode()];
@@ -149,7 +147,8 @@ int WorldSession::Update(uint32 InstanceID)
 			        && Handler->handler != 0)
 			{
 				LOG_DETAIL
-				("[Session] Received unexpected/wrong state packet with opcode %s (0x%.4X)",
+//				printf
+				("[Session] Received unexpected/wrong state packet with opcode %s (0x%.4X)",//\n",
 				 LookupName(packet->GetOpcode(), g_worldOpcodeNames),
 				 packet->GetOpcode());
 			}
@@ -159,13 +158,40 @@ int WorldSession::Update(uint32 InstanceID)
 				if(Handler->handler == 0)
 				{
 					LOG_DETAIL
-					("[Session] Received unhandled packet with opcode %s (0x%.4X)",
-					 LookupName(packet->GetOpcode(), g_worldOpcodeNames),
-					 packet->GetOpcode());
+//					printf
+					("[Session] Received unhandled packet with opcode %s (0x%.4X)",//\n",
+					LookupName(packet->GetOpcode(), g_worldOpcodeNames),
+					packet->GetOpcode());
 				}
 				else
 				{
-					(this->*Handler->handler)(*packet);
+					try
+					{
+						LOG_DETAIL
+//						printf
+						("[Session] Handling packet %s (0x%.4X)",//\n",
+						LookupName(packet->GetOpcode(), g_worldOpcodeNames),
+						packet->GetOpcode());
+						(this->*Handler->handler)(*packet);
+					}
+					catch(ByteBuffer::error)
+					{
+						LOG_DETAIL
+//						printf
+						("[Session] Packet error occured when handling packet %s (0x%.4X)",//\n",
+						LookupName(packet->GetOpcode(), g_worldOpcodeNames),
+						packet->GetOpcode());
+					}
+
+					if(packet->rpos() < packet->wpos())
+					{
+						LOG_DETAIL
+//						printf
+						("[Session] Incomplete handling(%u/%u) of packet %s (0x%.4X)",//\n",
+						packet->rpos(), packet->wpos(),
+						LookupName(packet->GetOpcode(), g_worldOpcodeNames),
+						packet->GetOpcode());
+					}
 				}
 			}
 		}
@@ -555,6 +581,10 @@ void WorldSession::InitPacketHandlerTable()
 	    &WorldSession::HandleRealmSplitOpcode;
 	WorldPacketHandlers[CMSG_REALM_SPLIT].status = STATUS_AUTHED;
 
+	WorldPacketHandlers[CMSG_READY_FOR_ACCOUNT_DATA_TIMES].handler = 
+		&WorldSession::HandleReadyForAccountDataTimes;
+	WorldPacketHandlers[CMSG_READY_FOR_ACCOUNT_DATA_TIMES].status = STATUS_AUTHED;
+	
 	// Queries
 	WorldPacketHandlers[MSG_CORPSE_QUERY].handler =
 	    &WorldSession::HandleCorpseQueryOpcode;
@@ -729,6 +759,8 @@ void WorldSession::InitPacketHandlerTable()
 	// Account Data
 	WorldPacketHandlers[CMSG_UPDATE_ACCOUNT_DATA].handler =
 	    &WorldSession::HandleUpdateAccountData;
+	WorldPacketHandlers[CMSG_REQUEST_ACCOUNT_DATA].status =
+	    STATUS_AUTHED;
 	WorldPacketHandlers[CMSG_REQUEST_ACCOUNT_DATA].handler =
 	    &WorldSession::HandleRequestAccountData;
 	WorldPacketHandlers[CMSG_TOGGLE_PVP].handler =
@@ -967,7 +999,7 @@ void WorldSession::InitPacketHandlerTable()
 	    &WorldSession::HandleCancelTotem;
 	WorldPacketHandlers[CMSG_LEARN_TALENT].handler =
 	    &WorldSession::HandleLearnTalentOpcode;
-	WorldPacketHandlers[CMSG_LEARN_TALENTS_MULTIPLE].handler =
+	WorldPacketHandlers[CMSG_LEARN_PREVIEW_TALENTS].handler =
 	    &WorldSession::HandleLearnMultipleTalentsOpcode;
 	WorldPacketHandlers[CMSG_UNLEARN_TALENTS].handler =
 	    &WorldSession::HandleUnlearnTalents;
@@ -1357,6 +1389,9 @@ void WorldSession::InitPacketHandlerTable()
 	WorldPacketHandlers[ CMSG_PLAYER_VEHICLE_ENTER ].handler = &WorldSession::HandleEnterVehicle;
 	WorldPacketHandlers[ CMSG_EJECT_PASSENGER ].handler = &WorldSession::HandleRemoveVehiclePassenger;
 
+	WorldPacketHandlers[CMSG_UPDATE_OBJECT_REQUEST].handler = 
+		&WorldSession::HandleObjectUpdateRequest;
+
 }
 
 void SessionLogWriter::writefromsession(WorldSession* session,
@@ -1589,6 +1624,21 @@ void WorldSession::SendRefundInfo(uint64 GUID)
 	}
 }
 
+void WorldSession::HandleWorldLoginOpcode(WorldPacket & recv_data)
+{
+	uint8 unk;
+	uint32 mapId;
+	recv_data >> unk >> mapId;
+}
+
+void WorldSession::HandleObjectUpdateRequest(WorldPacket & recv_data)
+{
+	uint64 guid;
+	recv_data >> guid;
+	
+	_player->SendObjectUpdate(guid);
+}
+
 void WorldSession::SendAccountDataTimes(uint32 mask)
 {
 	WorldPacket data(SMSG_ACCOUNT_DATA_TIMES, 4 + 1 + 4 + 8 * 4);	// changed
@@ -1660,9 +1710,8 @@ void WorldSession::HandleUnlearnSkillOpcode(WorldPacket & recv_data)
 
 void WorldSession::HandleLearnMultipleTalentsOpcode(WorldPacket & recvPacket)
 {
-	CHECK_INWORLD_RETURN uint32 talentcount;
-	uint32 talentid;
-	uint32 rank;
+	CHECK_INWORLD_RETURN
+	uint32 talentcount, spec, talentid, rank;
 
 	LOG_DEBUG("Recieved packet CMSG_LEARN_TALENTS_MULTIPLE.");
 
@@ -1686,8 +1735,29 @@ void WorldSession::HandleLearnMultipleTalentsOpcode(WorldPacket & recvPacket)
 	//
 	// //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	recvPacket >> talentcount;
+	recvPacket >> spec;
+	
+	if( spec != 0xFFFFFFFF )
+	{
+		uint32 TabId = 0;
+		for( uint32 i = o; i < dbcTalentTab.GetNumRows(); ++i )
+		{
+			TalentTabEntry const* tabInfo = dbcTalentTab.LookupRow(i);
+			if( tabInfo == NULL )
+				continue;
 
+			if( tabInfo->ClassMask == GetPlayer()->getClassMask() && tabInfo->TabPage == spec )
+			{
+				TabId = tabInfo->TalentTabID;
+				break;
+			}
+		}
+		
+		if( GetPlayer()->m_specs[_player->m_talentActiveSpec].ActiveTree == 0 )
+			GetPlayer()->m_specs[_player->m_talentActiveSpec].ActiveTree = TabId;
+	}
+
+	recvPacket >> talentcount;
 	for(uint32 i = 0; i < talentcount; ++i)
 	{
 		recvPacket >> talentid;

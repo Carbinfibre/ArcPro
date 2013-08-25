@@ -50,6 +50,7 @@ struct TrainerSpell;
 
 #define CHECK_GUID_EXISTS(guidx) if(_player == NULL || _player->GetMapMgr() == NULL || _player->GetMapMgr()->GetUnit((guidx)) == NULL) { return; }
 #define CHECK_PACKET_SIZE(pckp, ssize) if(ssize && pckp.size() < ssize) { Disconnect(); return; }
+#define SKIP_READ_PACKET(pckt) pckt.rpos(pckt.wpos())
 
 /**********************************************************************************
 * Worldsocket related
@@ -59,6 +60,65 @@ struct TrainerSpell;
 
 #define NOTIFICATION_MESSAGE_NO_PERMISSION "You do not have permission to perform that function."
 //#define CHECK_PACKET_SIZE(x, y) if(y > 0 && x.size() < y) { _socket->Disconnect(); return; }
+
+struct OpcodeHandler
+{
+	uint16 status;
+	void (worldSession::*handler)(WorldPacket & recvPacket);
+};
+
+enum ObjectUpdateFlags
+{
+	UPDATEFLAG_NONE 		= 0x0000,
+	UPDATEFLAG_SELF 		= 0x0001,
+	UPDATEFLAG_TRANSPORT 	= 0x0002,
+	UPDATEFLAG_HAS_TARGET 	= 0x0004,
+	UPDATEFLAG_LOWGUID 		= 0x0008,
+	UPDATEFLAG_HIGHGUID 	= 0x0010,
+	UPDATEFLAG_LIVING 		= 0x0020,
+	UPDATEFLAG_HAS_POSITION = 0x0040,
+	UPDATEFLAG_VEHICLE 		= 0x0080,
+	UPDATEFLAG_POSITION 	= 0x0100,
+	UPDATEFLAG_ROTATION 	= 0x0200,
+	UPDATEFLAG_UNK3 		= 0x0400,
+	UPDATEFLAG_ANIMKITS 	= 0x0800,
+	UPDATEFLAG_UNK5 		= 0x1000,
+	UPDATEFLAG_UNK6 		= 0x2000
+};
+
+enum SessionStatus
+{
+	STATUS_AUTHED = 0,
+	STATUS_LOGGEDIN
+}
+
+enum AccountDataType
+{
+	GLOBAL_CONFIG_CACHE				= 0, // 0x01 g
+	PER_CHARACTER_CONFIG_CACHE		= 1, // 0x02 p
+	GLOBAL_BINDINGS_CACHE			= 2, // 0x04 g
+	PER_CHARACTER_BINDINGS_CACHE	= 3, // 0x08 p
+	GLOBAL_MACROS_CACHE				= 4, // 0x10 g
+	PER_CHARACTER_MACROS_CACHE		= 5, // 0x20 p
+	PER_CHARACTER_LAYOUT_CACHE		= 6, // 0x40 p
+	PER_CHARACTER_CHAT_CACHE		= 7, // 0x80 p
+	NUM_ACCOUNT_DATA_TYPES			= 8
+};
+
+const uint8 GLOBAL_CACHE_MASK			= 0x15;
+const uint8 PER_CHARACTER_CACHE_MASK	= 0xEA;
+
+struct AccountDataEntry
+{
+	char* data;
+	uint32 sz;
+	bool bIsDirty;
+};
+
+typedef struct Cords
+{
+	float x, y, z;
+} Cords;
 
 // MovementFlags Contribution by Tenshi
 enum MovementFlags
@@ -116,21 +176,7 @@ enum MovementFlags
     MOVEFLAG_FULL_FALLING_MASK			= 0xE000,
 };
 
-enum MovementFlags2{
-	MOVEFLAG2_NO_STRAFING        = 0x01,
-	MOVEFLAG2_NO_JUMPING         = 0x02,
-	MOVEFLAG2_FULLSPEED_TURNING  = 0x08,
-	MOVEFLAG2_FULLSPEED_PITCHING = 0x10,
-	MOVEFLAG2_ALLOW_PITCHING     = 0x20
-};
-
-struct OpcodeHandler
-{
-	uint16 status;
-	void (WorldSession::*handler)(WorldPacket & recvPacket);
-};
-
-enum ObjectUpdateFlags
+enum MovementFlags2
 {
     UPDATEFLAG_NONE         = 0x00,
     UPDATEFLAG_SELF         = 0x01,
@@ -145,64 +191,96 @@ enum ObjectUpdateFlags
     UPDATEFLAG_ROTATION   = 0x0200
 };
 
-enum SessionStatus
-{
-    STATUS_AUTHED = 0,
-    STATUS_LOGGEDIN
-};
-
-enum AccountDataType
-{
-    GLOBAL_CONFIG_CACHE             = 0,                    // 0x01 g
-    PER_CHARACTER_CONFIG_CACHE      = 1,                    // 0x02 p
-    GLOBAL_BINDINGS_CACHE           = 2,                    // 0x04 g
-    PER_CHARACTER_BINDINGS_CACHE    = 3,                    // 0x08 p
-    GLOBAL_MACROS_CACHE             = 4,                    // 0x10 g
-    PER_CHARACTER_MACROS_CACHE      = 5,                    // 0x20 p
-    PER_CHARACTER_LAYOUT_CACHE      = 6,                    // 0x40 p
-    PER_CHARACTER_CHAT_CACHE        = 7,                    // 0x80 p
-    NUM_ACCOUNT_DATA_TYPES          = 8
-};
-
-const uint8 GLOBAL_CACHE_MASK        = 0x15;
-const uint8 PER_CHARACTER_CACHE_MASK = 0xEA;
-
-struct AccountDataEntry
-{
-	char* data;
-	uint32 sz;
-	bool bIsDirty;
-};
-
-typedef struct Cords
-{
-	float x, y, z;
-} Cords;
-
-
 class MovementInfo
 {
 	public:
-		uint32 time;
-		float pitch;// -1.55=looking down, 0=looking forward, +1.55=looking up
-		float redirectSin;//on slip 8 is zero, on jump some other number
-		float redirectCos, redirect2DSpeed;//9,10 changes if you are not on foot
-		uint32 unk11, unk12;
-		uint8 unk13;
-		uint32 unklast;//something related to collision
-		uint16 unk_230;
-
-		float x, y, z, orientation;
-		uint32 flags;
-		float redirectVelocity;
-		WoWGuid transGuid;
-		float transX, transY, transZ, transO, transUnk;
-		uint8 transUnk_2;
-
 		MovementInfo();
+		~MovementInfo();
+		
+		// Always read after initiating, or at least set some data.
+		void Init(uint64 guid);
+		void Read(ByteBuffer data);
+		void Write(ByteBuffer data);
+		
+		// Data setting commands
+		void SetMovementGuid(uint64 guid) { MoverGuid.Init(guid); };
+		
+		void SetMovementFlags(uint32 flags) { MovementFlags = flags; };
+		void AddMovementFlags(uint32 flags) { MovementFlags |= flags; };
+		void RemoveMovementFlags(uint32 flags) { MovementFlags &= ~flags; };
 
-		void init(WorldPacket & data);
-		void write(WorldPacket & data);
+		void SetMovementFlags2(uint16 flags2) { MovementFlags2 = flags2; };
+		void AddMovementFlags2(uint16 flags2) { MovementFlags2 |= flags2; };
+		void RemoveMovementFlags2(uint16 flags2) { MovementFlags2 &= ~flags2; };
+		// UPDATES MOVETIME
+		void SetMovementPos(float x, float y, float z, float o);
+		
+		// Transports
+		void SetTransportGuid(uint64 guid) { TransGuid = guid; };
+		void SetTransportSeat(int8 seat) { TransSeat = seat; };
+		// UPDATES ALL TRANSTIMERS
+		void SetTransportPosition(float x, float y, float z, float o);
+		bool HasTransportData() { if(TransGuid.GetNewGuidLen()) return true; return false; };
+
+		// Extras
+		void SetPitch(float pitch) { Pitch = pitch; };
+		void SetFallTime(uint32 falltime) { FallTime = falltime; };
+		void SetJumpData(float velocity, float sinangle, float cosangle, float arcspeed) { JumpVelocity = velocity; JumpSinAngle = sinangle; JumpCosAngle = cosangle; JumpXYSpeed = arcspeed; };
+		void SetSplineAngle(float splineangle) { SplineAngle = splineangle; };
+
+		// Commands for getting data
+		WoWGuid GetMovementGUID() { return MoverGuid; };
+		uint32 GetMovementFlags() { return MovementFlags; };
+		uint16 GetMovementFlags2() { return MovementFlags2; };
+		LocationVector GetMovementPos() { return LocationVector(PosX, PosY, PosZ, Orientation); };
+		float GetMovementPosX() { return PosX; };
+		float GetMovementPosY() { return PosY; };
+		float GetMovementPosZ() { return PosZ; };
+		float GetOrientation() { return Orientation; };
+		uint32 GetMovementTime() { return MoveTime; };
+
+		// Transports
+		WoWGuid GetTransportGUID() { return TransGuid; };
+		int8 GetTransportSeat() { return TransSeat; };
+		LocationVector GetTransportPos() { return LocationVector(TransX, TransY, TransZ, TransO); };
+		float GetTransportPosX() { return TransX; };
+		float GetTransportPosY() { return TransY; };
+		float GetTransportPosZ() { return TransZ; };
+		float GetTOrientation() { return TransO; };
+		uint32 GetTransportTime() { return TransTime; };
+		uint32 GetTransportTime2() { return TransTime2; };
+
+		// Extras
+		float GetPitch() { return Pitch; };
+		uint32 GetFallTime() { return FallTime; };
+		float GetJumpVelocity() { return JumpVelocity; };
+		float GetJumpSinAngle() { return JumpSinAngle; };
+		float GetJumpCosAngle() { return JumpCosAngle; };
+		float GetJumpXYSpeed() { return JumpXYSpeed; };
+		float GetSpineAngle() { return SplineAngle; };
+
+	protected:
+		WoWGuid MoverGuid;
+		uint32 MovementFlags;
+		uint16 MovementFlags2;
+		float PosX, PosY, PosZ, Orientation;
+		uint32 MoveTime;
+
+		WoWGuid TransGuid;
+		int8 TransSeat;
+		float TransX, TransY, TransZ, TransO;
+		uint32 TransTime, TransTime2;
+
+		float Pitch;
+
+		uint32 FallTime;
+
+		float JumpVelocity, JumpSinAngle, JumpCosAngle, JumpXYSpeed;
+
+		float SplineAngle;
+
+		// Packet counter
+		uint32 m_MovementCounter; 
 };
 
 extern OpcodeHandler WorldPacketHandlers[NUM_MSG_TYPES];
@@ -342,7 +420,6 @@ class SERVER_DECL WorldSession
 		Mutex deleteMutex;
 		void _HandleAreaTriggerOpcode(uint32 id);//real handle
 		int32 m_moveDelayTime;
-		int32 m_clientTimeDelay;
 
 		void CharacterEnumProc(QueryResult* result);
 		void LoadAccountDataProc(QueryResult* result);
@@ -357,6 +434,9 @@ class SERVER_DECL WorldSession
 		void HandleCharCreateOpcode(WorldPacket & recvPacket);
 		void HandlePlayerLoginOpcode(WorldPacket & recvPacket);
 		void HandleRealmSplitOpcode(WorldPacket & recvPacket);
+		void HandleReadyForAccountDataTimes(WorldPacket & recvPacket);
+		void HandleWorldLoginOpcode(WorldPacket & recvPacket);
+		void HandleObjectUpdateRequest(WorldPacket & recvPacket);
 
 		/// Authentification and misc opcodes (MiscHandler.cpp):
 		void HandlePingOpcode(WorldPacket & recvPacket);
@@ -802,7 +882,6 @@ class SERVER_DECL WorldSession
 
 		/* Preallocated buffers for movement handlers */
 		MovementInfo movement_info;
-		uint8 movement_packet[90];
 
 		uint32 _accountId;
 		uint32 _accountFlags;
@@ -811,8 +890,6 @@ class SERVER_DECL WorldSession
 		bool has_dk;
 		//uint16 _TEMP_ERR_CREATE_CODE; // increments
 		int8 _side;
-
-		WoWGuid m_MoverWoWGuid;
 
 		uint32 _logoutTime; // time we received a logout request -- wait 20 seconds, and quit
 

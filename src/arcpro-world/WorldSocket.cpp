@@ -183,6 +183,7 @@ OUTPACKET_RESULT WorldSocket::_OutPacket(uint16 opcode, size_t len, const void* 
 	if(!IsConnected())
 		return OUTPACKET_RESULT_NOT_CONNECTED;
 
+//	printf("Sending %s(0x%.4X)\n", LookupName(opcode, g_worldOpcodeNames), opcode);
 	BurstBegin();
 	//if((m_writeByteCount + len + 4) >= m_writeBufferSize)
 	if(writeBuffer.GetSpace() < (len + 4))
@@ -508,9 +509,6 @@ void WorldSocket::_HandlePing(WorldPacket* recvPacket)
 	{
 		mSession->_latency = _latency;
 		mSession->m_lastPing = (uint32)UNIXTIME;
-
-		// reset the move time diff calculator, don't worry it will be re-calculated next movement packet.
-		mSession->m_clientTimeDelay = 0;
 	}
 
 	OutPacket(SMSG_PONG, 4, &ping);

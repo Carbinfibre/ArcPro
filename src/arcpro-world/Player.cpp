@@ -1677,8 +1677,6 @@ void Player::smsg_InitialSpells()
 
 	GetSession()->SendPacket(&data);
 
-	uint32 v = 0;
-	GetSession()->OutPacket(0x041d, 4, &v);
 	//Log::getSingleton( ).outDetail( "CHARACTER: Sent Initial Spells" );
 }
 
@@ -1694,20 +1692,41 @@ void Player::smsg_TalentsInfo(bool SendPetTalents)
 	}
 	else
 	{
-		//data << uint32(GetTalentPoints(SPEC_PRIMARY)); // Wrong, calculate the amount of talent points per spec
-		data << uint32(m_specs[m_talentActiveSpec].GetTP() );
+		uint8 pClass = getClass();
+		
+		data << uint32(m_specs[m_talentActiveSpec].GetTP());
 		data << uint8(m_talentSpecsCount);
 		data << uint8(m_talentActiveSpec);
 		for(uint8 s = 0; s < m_talentSpecsCount; s++)
 		{
+			uint8 count = 0;
 			PlayerSpec spec = m_specs[s];
-			data << uint8(spec.talents.size());
-			std::map<uint32, uint8>::iterator itr;
-			for(itr = spec.talents.begin(); itr != spec.talents.end(); itr++)
-			{
-				data << uint32(itr->first);     // TalentId
-				data << uint8(itr->second);     // TalentRank
+			data << uint32(spec.ActiveTree);
+			size_t pos = data.wpos();
+			data << count;
+			for(uint8 i = 0; i < 3; ++i)
+			{ 
+				uint32 const talentTabId = TalentTreesPerClass[pClass][i];
+				for(uint32 talentId = 0; talentId < dbcTalent.GetNumRows(); ++talentId)
+				{
+					TalentEntry* talentInfo = dbcTalent.LookupRowForced(talentId);
+					if(talentInfo == NULL)
+						continue;
+
+					// Skip another tab talents
+					if(talentInfo->TalentTree != talentTabId)
+						continue;
+					std::map<uint32, uint8>::iterator itr = spec.talents.find(talentInfo->TalentID);
+					if(itr == spec.talents.end())
+						continue;
+
+					data << uint32(itr->first);
+					data << uint8(itr->second);
+					++count;
+				}
 			}
+
+			data.put<uint8>(pos, count); // Put real count
 
 			// Send Glyph info
 			data << uint8(GLYPHS_COUNT);
@@ -2520,7 +2539,7 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 	}
 	ss << uint32(m_talentSpecsCount) << ", " << uint32(m_talentActiveSpec);
 	ss << ", '";
-	ss << uint32(m_specs[SPEC_PRIMARY].GetTP() ) << " " << uint32(m_specs[SPEC_SECONDARY].GetTP() );
+	ss << uint32(m_specs[SPEC_PRIMARY].GetTP() ) << " " << uint32(m_specs[SPEC_SECONDARY].GetTP() ) << " " << uint32(m_specs[SPEC_PRIMARY].ActiveTree) << " " << uint32(m_specs[SPEC_SECONDARY].ActiveTree);
 	ss << "', ";
 
 	ss << "'" << m_phase << "','";
@@ -3249,14 +3268,17 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 
 	{
 		std::stringstream ss( get_next_field.GetString() );
-		uint32 tp1 = 0;
-		uint32 tp2 = 0;
+		uint32 tp1 = 0, tps = 0, active1 = 0, active2 = 0;
 
 		ss >> tp1;
 		ss >> tp2;
+		ss >> active1;
+		ss >> active2;
 
-		m_specs[ SPEC_PRIMARY ].SetTP( tp1 );
-		m_specs[ SPEC_SECONDARY ].SetTP( tp2 );
+		m_specs[SPEC_PRIMARY].SetTP( tp1 );
+		m_specs[SPEC_SECONDARY].SetTP( tp2 );
+		m_specs[SPEC_PRIMARY].ActiveTree = active1;
+		m_specs[SPEC_SECONDARY].ActiveTree = active2;
 		SetUInt32Value( PLAYER_CHARACTER_POINTS1, m_specs[ m_talentActiveSpec ].GetTP() );
 	}
 
@@ -3573,6 +3595,37 @@ void Player::SetQuestLogSlot(QuestLogEntry* entry, uint32 slot)
 	m_questlog[slot] = entry;
 }
 
+void Player::SendObjectUpdate(uint64 guid)
+{
+	uint32 count = 1;
+	WorldPacket data(SMSG_UPDATE_OBJECT, 200);
+	data << uint16(GetMapId());
+	data << count;
+	if(guid == GetGUID())
+	{
+		count += Object::BuildCreateUpdateBlockForPlayer(&data, this);
+	}
+	else if(IsInWorld())
+	{
+		Object* obj = GetMapMgr()->_GetObject(guid);
+		if(obj != NULL)
+		{
+			count += obj->BuildCreateUpdateBlockForPlayer(&data, this);
+		}
+	}
+	else
+	{
+		// We aren't pushed yet.
+		return;
+	}
+
+	printf("Sending update with size %u type %s %s\n", data.size(), (guid == GetGUID() ? "Player" : "Non Player"), (IsInWorld() ? "Is in world" : "Out of world"));
+	data.put<uint32>(2, count);
+	// send uncompressed because it's specified
+	m_session->SendPacket(&data);
+	ProcessPendingUpdates();
+}
+
 void Player::AddToWorld()
 {
 	FlyCheat = false;
@@ -3667,10 +3720,15 @@ void Player::OnPushToWorld()
 	m_beingPushed = false;
 	AddItemsToWorld();
 
-	// delay the unlock movement packet
-	WorldPacket* data = new WorldPacket(SMSG_TIME_SYNC_REQ, 4);
-	*data << uint32(0);
-	delayedPackets.add(data);
+	// Delay the unlock movement packet
+	WorldPacket data(SMSG_TIME_SYNC_REG, 4);
+	data << uint32(0);
+	CopyAndSendDelayedPacket(&data);
+	
+	// Delay the unlock movement packet
+		data.Initialize(SMSG_UI_TIME);
+		data << uint32(UNITXTIME)
+		CopyAndSendDelayedPacket(&data);
 
 	// Update PVP Situation
 	LoginPvPSetup();
@@ -4927,9 +4985,7 @@ void Player::CleanupChannels()
 void Player::SendInitialActions()
 {
 	WorldPacket data(SMSG_ACTION_BUTTONS, PLAYER_ACTION_BUTTON_SIZE + 1);
-
-	data << uint8(0);         // VLack: 3.1, some bool - 0 or 1. seems to work both ways
-
+	data << uint8(1);         // VLack: 3.1, some bool - 0 or 1. Seems to work both ways
 	for(uint32 i = 0; i < PLAYER_ACTION_BUTTON_COUNT; ++i)
 	{
 		data << m_specs[m_talentActiveSpec].mActions[i].Action;
@@ -6460,6 +6516,7 @@ void Player::Reset_Talents()
 		ResetDualWield2H();
 	}
 
+	m_specs[m_talentActiveSpec].ActiveTree = 0;
 	m_specs[m_talentActiveSpec].talents.clear();
 	smsg_TalentsInfo(false); //VLack: should we send this as Aspire? Yes...
 }
@@ -7427,19 +7484,21 @@ void Player::PushCreationData(ByteBuffer* data, uint32 updatecount)
 void Player::ProcessPendingUpdates()
 {
 	_bufferS.Acquire();
-	if(!bUpdateBuffer.size() && !mOutOfRangeIds.size() && !bCreationBuffer.size())
+	if(!bUpdateBuffer.size() && !mOutOfRangeIds.size() && !bCreationBuffer.size() && !delayedPackets.size()) 
 	{
 		_bufferS.Release();
 		return;
 	}
 
-	size_t bBuffer_size = (bCreationBuffer.size() > bUpdateBuffer.size() ? bCreationBuffer.size() : bUpdateBuffer.size()) + 10 + (mOutOfRangeIds.size() * 9);
+	size_t bBuffer_size = (bCreationBuffer.size() > bUpdateBuffer.size() ? bCreationBuffer.size() : bUpdateBuffer.size()) + 14 + (mOutOfRangeIds.size() * 9);
 	uint8* update_buffer = new uint8[bBuffer_size];
 	size_t c = 0;
 
 	//build out of range updates if creation updates are queued
 	if(bCreationBuffer.size() || mOutOfRangeIdCount)
 	{
+		*(uint16*)&update_buffer[c] = (uint16)GetMapId();
+		c += 2;
 		*(uint32*)&update_buffer[c] = ((mOutOfRangeIds.size() > 0) ? (mCreationCount + 1) : mCreationCount);
 		c += 4;
 
@@ -7478,11 +7537,10 @@ void Player::ProcessPendingUpdates()
 	if(bUpdateBuffer.size())
 	{
 		c = 0;
-
+		*(uint16*)&update_buffer[c] = (uint16)GetMapId();
+		c += 2;
 		*(uint32*)&update_buffer[c] = ((mOutOfRangeIds.size() > 0) ? (mUpdateCount + 1) : mUpdateCount);
 		c += 4;
-
-		//update_buffer[c] = 1;																			   ++c;
 		memcpy(&update_buffer[c], bUpdateBuffer.contents(), bUpdateBuffer.size());
 		c += bUpdateBuffer.size();
 
@@ -7524,67 +7582,71 @@ void Player::ProcessPendingUpdates()
 
 bool Player::CompressAndSendUpdateBuffer(uint32 size, const uint8* update_buffer)
 {
-	uint32 destsize = size + size / 10 + 16;
+	uint32 destsize = compressBound(size);
+	WorldPacket data(SMSG_COMPRESSED_UPDATE_OBJECT, destsize);
 	int rate = sWorld.getIntRate(INTRATE_COMPRESSION);
 	if(size >= 40000 && rate < 6)
 		rate = 6;
+	if(rate < 1 || rate > 9)
+		rate = 1;
 
-	// set up stream
+	// Set up stream
 	z_stream stream;
 	stream.zalloc = 0;
 	stream.zfree  = 0;
-	stream.opaque = 0;
-
+	stream opaque = 0;
+	
 	if(deflateInit(&stream, rate) != Z_OK)
 	{
-		LOG_ERROR("deflateInit failed.");
+//		DEBUG_LOG
+		printf("deflateInit failed.\n");//");
 		return false;
 	}
 
-	uint8* buffer = new uint8[destsize];
-	//memset(buffer,0,destsize);	/* fix umr - burlex */
+	uint8 *buffer = new uint8[destsize];
 
-	// set up stream pointers
-	stream.next_out  = (Bytef*)buffer + 4;
+	// Set up stream pointers
+	stream.next_out  = (Bytef*)buffer;
 	stream.avail_out = destsize;
 	stream.next_in   = (Bytef*)update_buffer;
 	stream.avail_in  = size;
 
-	// call the actual process
-	if(deflate(&stream, Z_NO_FLUSH) != Z_OK ||
-	        stream.avail_in != 0)
+	// Call the actual process
+	if(deflate(&stream, Z_NO_FLUSH) != Z_OK || stream.avail_in != 0)
 	{
-		LOG_ERROR("deflate failed.");
+//		DEBUG_LOG
+		printf("deflate failed.\n");//");
 		delete [] buffer;
 		return false;
 	}
 
-	// finish the deflate
+	// Finish the deflate
 	if(deflate(&stream, Z_FINISH) != Z_STREAM_END)
 	{
-		LOG_ERROR("deflate failed: did not end stream");
+//		DEBUG_LOG
+		printf("deflate failed: did not end stream\n");//");
 		delete [] buffer;
 		return false;
 	}
 
-	// finish up
+	// Finish up
 	if(deflateEnd(&stream) != Z_OK)
 	{
-		LOG_ERROR("deflateEnd failed.");
+//		DEBUG_LOG
+		printf("deflate failed.\n");//");
 		delete [] buffer;
 		return false;
 	}
 
-	// fill in the full size of the compressed stream
+	// Fill in the full size of the compressed stream
+	data << uint32(stream.total_in);
+	data.append(buffer, uint32(stream.total_out));
+	
+	// Send it
+	SendPacket(&data);
 
-	*(uint32*)&buffer[0] = size;
-
-	// send it
-	m_session->OutPacket(SMSG_COMPRESSED_UPDATE_OBJECT, (uint16)stream.total_out + 4, buffer);
-
-	// cleanup memory
+	// Cleanup memory
 	delete [] buffer;
-
 	return true;
 }
 
@@ -11426,11 +11488,10 @@ void Player::Social_TellFriendsOffline()
 
 void Player::Social_SendFriendList(uint32 flag)
 {
-	WorldPacket data(SMSG_CONTACT_LIST, 500);
 	Player* plr;
 	PlayerCache* cache;
 
-
+	WorldPacket data(SMSG_CONTACT_LIST, 500);
 	data << flag;
 	data << uint32(m_cache->GetSize64(CACHE_SOCIAL_FRIENDLIST) + m_cache->GetSize64(CACHE_SOCIAL_IGNORELIST));
 	m_cache->AcquireLock64(CACHE_SOCIAL_FRIENDLIST);
@@ -12321,7 +12382,7 @@ void Player::SendPreventSchoolCast(uint32 SpellSchool, uint32 unTimeMs)
 		if(spellInfo->School == SpellSchool)
 		{
 			data << uint32(SpellId);
-			data << uint32(unTimeMs);                       // in m.secs
+			data << uint32(unTimeMs); // in m.secs
 		}
 	}
 	GetSession()->SendPacket(&data);
@@ -12372,7 +12433,7 @@ void Player::SendTeleportAckMsg(const LocationVector & v)
 	WorldPacket data(MSG_MOVE_TELEPORT_ACK, 80);
 
 	data << GetNewGUID();
-	data << uint32(2);   // flags
+	data << uint32(0);
 	data << getMSTime();
 	data << uint16(0);
 	data << float(0);

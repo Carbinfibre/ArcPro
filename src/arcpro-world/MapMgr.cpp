@@ -297,7 +297,7 @@ void MapMgr::PushObject(Object* obj)
 	//MapCell::ObjectSet::iterator iter;
 
 	ByteBuffer* buf = 0;
-	uint32 count;
+	uint32 count = 0;
 	Player* plObj;
 
 	if(obj->IsPlayer())
@@ -307,10 +307,15 @@ void MapMgr::PushObject(Object* obj)
 
 	if(plObj != NULL)
 	{
+		buf = new ByteBuffer(2500);
+		if(plObj->m_CurrentTransporter)
+			count = plObj->m_currentTransporter->BuildCreateUpdateBlockForPlayer(buf, plObj);
 		LOG_DETAIL("Creating player " I64FMT " for himself.", obj->GetGUID());
-		ByteBuffer pbuf(10000);
-		count = plObj->BuildCreateUpdateBlockForPlayer(&pbuf, plObj);
-		plObj->PushCreationData(&pbuf, count);
+		count += plObj->BuildCreateUpdateBlockForPlayer(buf, plObj);
+		plObj->PushCreationData(buf, count);
+			plObj->ProcessPendingUpdates();
+			delete buf;
+			buf = 0;
 	}
 
 	//////////////////////
@@ -328,6 +333,12 @@ void MapMgr::PushObject(Object* obj)
 			}
 		}
 	}
+	
+		if(buf)
+		{
+			delete buf;
+			buf = 0;
+		}
 
 	//Add to the cell's object list
 	objCell->AddObject(obj);

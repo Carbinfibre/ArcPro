@@ -83,23 +83,19 @@ enum OBJECT_UPDATE_TYPE
     UPDATETYPE_VALUES = 0,
     //  8 bytes - GUID
     //  Goto Update Block
-    UPDATETYPE_MOVEMENT = 1,
-    //  8 bytes - GUID
-    //  Goto Position Update
-    UPDATETYPE_CREATE_OBJECT = 2,
+    UPDATETYPE_CREATE_OBJECT = 1,
     //  8 bytes - GUID
     //  1 byte - Object Type (*)
     //  Goto Position Update
     //  Goto Update Block
-    UPDATETYPE_CREATE_YOURSELF = 3, // Looks like 3 & 4 do the same thing
+    UPDATETYPE_CREATE_YOURSELF = 2, // Looks like 2 & 3 do the same thing
     //  4 bytes - Count
     //  Loop Count Times:
     //  8 bytes - GUID
-    UPDATETYPE_OUT_OF_RANGE_OBJECTS = 4 // <- this is correct, not sure about 3
-                                      //  4 bytes - Count
-                                      //  Loop Count Times:
-                                      //  8 bytes - GUID
-
+	UPDATETYPE_OUT_OF_RANGE_OBJECTS = 3 // <- This is correct, not sure about 4
+    //  4 bytes - Count
+    //  Loop Count Times:
+    //  8 bytes - GUID
 };
 
 enum PHASECOMMANDS
@@ -124,6 +120,7 @@ struct TransporterInfo{
 	float z;
 	float o;
 	uint32 flags;
+	uint32 flags2;
 	uint8 seat;
 
 	TransporterInfo(){
@@ -133,6 +130,7 @@ struct TransporterInfo{
 		z = 0.0f;
 		o = 0.0f;
 		flags = 0;
+		flags2 = 0;
 		seat = 0;
 	}
 };
@@ -713,7 +711,7 @@ class SERVER_DECL Object : public EventableObject
 		//! Mark values that player should get when he/she/it sees object for first time.
 		virtual void _SetCreateBits(UpdateMask* updateMask, Player* target) const;
 		//! Create updates that player will see
-		void _BuildMovementUpdate(ByteBuffer* data, uint16 flags, uint32 flags2, Player* target);
+		void _BuildMovementUpdate(ByteBuffer* data, uint16 flags, Player* target);
 		void _BuildValuesUpdate(ByteBuffer* data, UpdateMask* updateMask, Player* target);
 
 		//! WoWGuid class

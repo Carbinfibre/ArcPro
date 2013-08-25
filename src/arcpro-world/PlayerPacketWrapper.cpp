@@ -251,7 +251,6 @@ void Player::SendDungeonDifficulty()
 {
 
 	WorldPacket data(MSG_SET_DUNGEON_DIFFICULTY, 12);
-
 	data << uint32(iInstanceType);
 	data << uint32(1);
 	data << uint32(InGroup());
@@ -599,10 +598,8 @@ void Player::SendInitialLogonPackets()
 
 	//Tutorial Flags
 	data.Initialize(SMSG_TUTORIAL_FLAGS);
-
 	for(int i = 0; i < 8; i++)
 		data << uint32(m_Tutorials[i]);
-
 	m_session->SendPacket(&data);
 
 	smsg_TalentsInfo(false);
@@ -612,20 +609,51 @@ void Player::SendInitialLogonPackets()
 	data << uint32(0); // count, for(count) uint32;
 	GetSession()->SendPacket(&data);
 
+	data.Initialize(0x0BDE8);
+	data << uint32(0);
+	m_session->SendPacket(&data);
+	
 	SendInitialActions();
-	smsg_InitialFactions();
-
-
-
-	data.Initialize(SMSG_LOGIN_SETTIMESPEED);
-
-	data << uint32( Arcpro::Util::MAKE_GAME_TIME() );
-	data << float(0.0166666669777748f);    // Normal Game Speed
-	data << uint32(0);   // 3.1.2
-
+	
+	data.Initialize(SMSG_INIT_CURRENCY);
+	data << uint32(4);
+	data << uint32(0);
+	data << uint8(0);
+	data << uint32(390);
+	data << uint32(0);
+	data << uint32(0);
+	data << uint32(0);
+	data << uint32(0);
+	data << uint8(0);
+	data << uint32(392);
+	data << uint32(0);
+	data << uint32(0);
+	data << uint32(0);
+	data << uint32(0);
+	data << uint8(0);
+	data << uint32(395);
+	data << uint32(0);
+	data << uint32(0);
+	data << uint32(0);
+	data << uint32(0);
+	data << uint8(0);
+	data << uint32(396);
+	data << uint32(0);
+	data << uint32(0);
+	data << uint32(0);
+	data << uint32(0);
+	data << uint8(0);
 	m_session->SendPacket(&data);
 
-	// cebernic for speedhack bug
+	data.Initialize(SMSG_LOGIN_SETTIMESPEED);
+	data << uint32( Arcpro::Util::MAKE_GAME_TIME() );
+	data << float(0.0166666669777748f); // Normal Game Speed
+	data << uint32(0); // Patch 3.1.2
+	m_session->SendPacket(&data);
+	
+	smsg_InitialFactions();
+
+	// Cebernic for speedhack bug
 	m_lastRunSpeed = 0;
 	UpdateSpeed();
 

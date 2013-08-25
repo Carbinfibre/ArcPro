@@ -1079,50 +1079,41 @@ void WorldSession::HandleResurrectResponseOpcode(WorldPacket & recv_data)
 void WorldSession::HandleUpdateAccountData(WorldPacket & recv_data)
 {
 	LOG_DETAIL("WORLD: Received CMSG_UPDATE_ACCOUNT_DATA");
-
-	uint32 uiID;
 	if(!sWorld.m_useAccountData)
-		return;
-
-	recv_data >> uiID;
-
-	if(uiID > 8)
 	{
-		// Shit..
-		LOG_ERROR("WARNING: Accountdata > 8 (%d) was requested to be updated by %s of account %d!", uiID, GetPlayer()->GetName(), this->GetAccountId());
+		SKIP_READ_PACKET(recv_data);
 		return;
 	}
 
+	uint32 uiID, time;
 	uint32 uiDecompressedSize;
+	recv_data >> uiID >> time;
 	recv_data >> uiDecompressedSize;
+	if(uiID > 8)
+	{
+		// Shit..
+		SKIP_READ_PACKET(recv_data);
+		LOG_ERROR("WARNING: Accountdata > 8 (%d) was requested to be updated by %s of account %d!", uiID, GetPlayer()->GetName(), this->GetAccountId());
+		return;
+	}
 	uLongf uid = uiDecompressedSize;
 
 	// client wants to 'erase' current entries
 	if(uiDecompressedSize == 0)
 	{
+		SKIP_READ_PACKET(recv_data);
 		SetAccountData(uiID, NULL, false, 0);
-		WorldPacket rdata(SMSG_UPDATE_ACCOUNT_DATA_COMPLETE, 4 + 4); //VLack: seen this in a 3.1.1 packet dump as response
-		rdata << uint32(uiID);
-		rdata << uint32(0);
-		SendPacket(&rdata);
 		return;
 	}
-
-	/*
-	if(uiDecompressedSize>100000)
-	{
-		Disconnect();
-		return;
-	}
-	*/
 
 	if(uiDecompressedSize >= 65534)
 	{
+		SKIP_READ_PACKET(recv_data);
 		// BLOB fields can't handle any more than this.
 		return;
 	}
 
-	size_t ReceivedPackedSize = recv_data.size() - 8;
+	size_t ReceivedPackedSize = recv_data.size() - 12;
 	char* data = new char[uiDecompressedSize + 1];
 	memset(data, 0, uiDecompressedSize + 1);	/* fix umr here */
 
@@ -1130,7 +1121,7 @@ void WorldSession::HandleUpdateAccountData(WorldPacket & recv_data)
 	{
 		int32 ZlibResult;
 
-		ZlibResult = uncompress((uint8*)data, &uid, recv_data.contents() + 8, (uLong)ReceivedPackedSize);
+		ZlibResult = uncompress((uint8*)data, &uid, recv_data.contents() + 12, (uLong)ReceivedPackedSize);
 
 		switch(ZlibResult)
 		{
@@ -1159,13 +1150,9 @@ void WorldSession::HandleUpdateAccountData(WorldPacket & recv_data)
 	}
 	else
 	{
-		memcpy(data, recv_data.contents() + 8, uiDecompressedSize);
+		memcpy(data, recv_data.contents() + 12, uiDecompressedSize);
 		SetAccountData(uiID, data, false, uiDecompressedSize);
-	}
-	WorldPacket rdata(SMSG_UPDATE_ACCOUNT_DATA_COMPLETE, 4 + 4); //VLack: seen this in a 3.1.1 packet dump as response
-	rdata << uint32(uiID);
-	rdata << uint32(0);
-	SendPacket(&rdata);
+	}SKIP_READ_PACKET(recv_data);
 }
 
 void WorldSession::HandleRequestAccountData(WorldPacket & recv_data)
@@ -2553,11 +2540,16 @@ void WorldSession::HandleRealmSplitOpcode(WorldPacket & recv_data)
 
 	WorldPacket data(SMSG_REALM_SPLIT, 4 + 4 + split_date.size() + 1);
 	data << unk;
-	data << uint32(0);   // realm split state
-	// split states:
+	data << uint32(0); // Realm split state
+	// Split states:
 	// 0x0 realm normal
 	// 0x1 realm split
 	// 0x2 realm split pending
 	data << split_date;
 	SendPacket(&data);
+}
+
+void WorldSession::HandleReadyForAccountDataTimes(WorldPacket & recv_data)
+{
+	SendAccountDataTimes(0x15);
 }

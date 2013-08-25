@@ -173,7 +173,7 @@ void _HandleBreathing(MovementInfo & movement_info, Player* _player, WorldSessio
 		// player is above water level
 		if(pSession->m_bIsWLevelSet)
 		{
-			if((movement_info.z + _player->m_noseLevel) > pSession->m_wLevel)
+			if((movement_info.GetMovementPosZ() + _player->m_noseLevel) > pSession->m_wLevel)
 			{
 				_player->RemoveAurasByInterruptFlag(AURA_INTERRUPT_ON_LEAVE_WATER);
 
@@ -186,7 +186,7 @@ void _HandleBreathing(MovementInfo & movement_info, Player* _player, WorldSessio
 	}
 
 	//player is swimming and not flagged as in the water
-	if(movement_info.flags & MOVEFLAG_SWIMMING && !(_player->m_UnderwaterState & UNDERWATERSTATE_SWIMMING))
+	if(movement_info.GetMovementFlags() & MOVEFLAG_SWIMMING && !(_player->m_UnderwaterState & UNDERWATERSTATE_SWIMMING))
 	{
 		_player->RemoveAurasByInterruptFlag(AURA_INTERRUPT_ON_ENTER_WATER);
 
@@ -194,7 +194,7 @@ void _HandleBreathing(MovementInfo & movement_info, Player* _player, WorldSessio
 		if(!pSession->m_bIsWLevelSet)
 		{
 			// water level is somewhere below the nose of the character when entering water
-			pSession->m_wLevel = movement_info.z + _player->m_noseLevel * 0.95f;
+			pSession->m_wLevel = movement_info.GetMovementPosZ() + _player->m_noseLevel * 0.95f;
 			pSession->m_bIsWLevelSet = true;
 		}
 
@@ -202,10 +202,10 @@ void _HandleBreathing(MovementInfo & movement_info, Player* _player, WorldSessio
 	}
 
 	// player is not swimming and is not stationary and is flagged as in the water
-	if(!(movement_info.flags & MOVEFLAG_SWIMMING) && (movement_info.flags != MOVEFLAG_MOVE_STOP) && (_player->m_UnderwaterState & UNDERWATERSTATE_SWIMMING))
+	if(!(movement_info.GetMovementFlags() & MOVEFLAG_SWIMMING) && (movement_info.GetMovementFlags() != MOVEFLAG_MOVE_STOP) && (_player->m_UnderwaterState & UNDERWATERSTATE_SWIMMING))
 	{
 		// player is above water level
-		if((movement_info.z + _player->m_noseLevel) > pSession->m_wLevel)
+		if((movement_info.GetMovementPosZ() + _player->m_noseLevel) > pSession->m_wLevel)
 		{
 			_player->RemoveAurasByInterruptFlag(AURA_INTERRUPT_ON_LEAVE_WATER);
 
@@ -220,7 +220,7 @@ void _HandleBreathing(MovementInfo & movement_info, Player* _player, WorldSessio
 	if(_player->m_UnderwaterState & UNDERWATERSTATE_SWIMMING && !(_player->m_UnderwaterState & UNDERWATERSTATE_UNDERWATER))
 	{
 		//the player is in the water and has gone under water, requires breath bar.
-		if((movement_info.z + _player->m_noseLevel) < pSession->m_wLevel)
+		if((movement_info.GetMovementPosZ() + _player->m_noseLevel) < pSession->m_wLevel)
 		{
 			_player->m_UnderwaterState |= UNDERWATERSTATE_UNDERWATER;
 			WorldPacket data(SMSG_START_MIRROR_TIMER, 20);
@@ -234,7 +234,7 @@ void _HandleBreathing(MovementInfo & movement_info, Player* _player, WorldSessio
 	if(_player->m_UnderwaterState & UNDERWATERSTATE_SWIMMING && _player->m_UnderwaterState & UNDERWATERSTATE_UNDERWATER)
 	{
 		//the player is in the water but their face is above water, no breath bar needed.
-		if((movement_info.z + _player->m_noseLevel) > pSession->m_wLevel)
+		if((movement_info.GetMovementPosZ() + _player->m_noseLevel) > pSession->m_wLevel)
 		{
 			_player->m_UnderwaterState &= ~UNDERWATERSTATE_UNDERWATER;
 			WorldPacket data(SMSG_START_MIRROR_TIMER, 20);
@@ -247,7 +247,7 @@ void _HandleBreathing(MovementInfo & movement_info, Player* _player, WorldSessio
 	if(!(_player->m_UnderwaterState & UNDERWATERSTATE_SWIMMING) && _player->m_UnderwaterState & UNDERWATERSTATE_UNDERWATER)
 	{
 		//the player is out of the water, no breath bar needed.
-		if((movement_info.z + _player->m_noseLevel) > pSession->m_wLevel)
+		if((movement_info.GetMovementPosZ() + _player->m_noseLevel) > pSession->m_wLevel)
 		{
 			_player->m_UnderwaterState &= ~UNDERWATERSTATE_UNDERWATER;
 			WorldPacket data(SMSG_START_MIRROR_TIMER, 20);
@@ -327,24 +327,14 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
 		_player->SetStandState(STANDSTATE_STAND);
 
 	/************************************************************************/
-	/* Make sure the packet is the correct size range.                      */
-	/************************************************************************/
-	//if(recv_data.size() > 80) { Disconnect(); return; }
-
-	/************************************************************************/
 	/* Read Movement Data Packet                                            */
 	/************************************************************************/
-	WoWGuid guid;
-	recv_data >> guid;
-	movement_info.init(recv_data);
-
-	if(guid != m_MoverWoWGuid.GetOldGuid())
-	{
-		return;
-	}
+	uint64 MoverGuid = recv_data.unpackGUID();
+	movement_info.Init(MoverGuid);
+	movement_info.Read(recv_data);
 	
 	// Player is in control of some entity, so we move that instead of the player
-	Unit *mover = _player->GetMapMgr()->GetUnit( m_MoverWoWGuid.GetOldGuid() );
+	Unit *mover = _player->GetMapMgr()->GetUnit( movement_info.GetMovementGUID().GetOldGuid() );
 	if( mover == NULL )
 		return;
 
@@ -355,9 +345,9 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
 		Disconnect();
 		return;
 	}
-	if(recv_data.GetOpcode() == MSG_MOVE_FALL_LAND || movement_info.flags & MOVEFLAG_SWIMMING)
+	if(recv_data.GetOpcode() == MSG_MOVE_FALL_LAND || movement_info.GetMovementFlags() & MOVEFLAG_SWIMMING)
 		_player->jumping = false;
-	if(!_player->jumping && (recv_data.GetOpcode() == MSG_MOVE_JUMP || movement_info.flags & MOVEFLAG_FALLING))
+	if(!_player->jumping && (recv_data.GetOpcode() == MSG_MOVE_JUMP || movement_info.GetMovementFlags() & MOVEFLAG_FALLING))
 		_player->jumping = true;
 
 	/************************************************************************/
@@ -387,7 +377,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
 		case MSG_MOVE_FALL_LAND:
 			_player->jumping = false;
 			break;
-
+		
 		default:
 			moved = false;
 			break;
@@ -399,7 +389,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
 
 	LOG_DETAIL("Movement flags");
 	for(uint32 i = 0; i < nmovementflags; i++)
-		if((movement_info.flags & MoveFlagsToNames[ i ].flag) != 0)
+		if((movement_info.GetMovementFlags() & MoveFlagsToNames[ i ].flag) != 0)
 			LOG_DETAIL("%s", MoveFlagsToNames[ i ].name);
 
 #endif
@@ -417,7 +407,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
 	}
 
 	// Rotating your character with a hold down right click mouse button
-	if(_player->GetOrientation() != movement_info.orientation)
+	if(_player->GetOrientation() != movement_info.GetOrientation())
 		_player->isTurning = true;
 	else
 		_player->isTurning = false;
@@ -426,7 +416,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
 	/************************************************************************/
 	/* Anti-Fly Hack Checks       - Alice : Disabled for now                                           */
 	/************************************************************************/
-	/*if( sWorld.antihack_flight && ( recv_data.GetOpcode() == CMSG_MOVE_FLY_START_AND_END || recv_data.GetOpcode() == CMSG_FLY_PITCH_DOWN_AFTER_UP ) && !( movement_info.flags & MOVEFLAG_SWIMMING || movement_info.flags & MOVEFLAG_FALLING || movement_info.flags & MOVEFLAG_FALLING_FAR || movement_info.flags & MOVEFLAG_FREE_FALLING ) && _player->flying_aura == 0 )
+	/*if( sWorld.antihack_flight && ( recv_data.GetOpcode() == CMSG_MOVE_FLY_START_AND_END || recv_data.GetOpcode() == CMSG_FLY_PITCH_DOWN_AFTER_UP ) && !( movement_info.GetMovementFlags() & MOVEFLAG_SWIMMING || movement_info.GetMovementFlags() & MOVEFLAG_FALLING || movement_info.GetMovementFlags() & MOVEFLAG_FALLING_FAR || movement_info.GetMovementFlags() & MOVEFLAG_FREE_FALLING ) && _player->flying_aura == 0 )
 	{
 		if( sWorld.no_antihack_on_gm && _player->GetSession()->HasGMPermissions() )
 		{
@@ -444,10 +434,10 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
 		/************************************************************************/
 		/* Anti-Teleport                                                        */
 		/************************************************************************/
-		if(sWorld.antihack_teleport && _player->m_position.Distance2DSq(movement_info.x, movement_info.y) > 3025.0f
+		if(sWorld.antihack_teleport && _player->m_position.Distance2DSq(movement_info.GetMovementPosX(), movement_info.GetMovementPosY()) > 3025.0f
 		        && _player->m_runSpeed < 50.0f && !_player->transporter_info.guid)
 		{
-			sCheatLog.writefromsession(this, "Disconnected for teleport hacking. Player speed: %f, Distance traveled: %f", _player->m_runSpeed, sqrt(_player->m_position.Distance2DSq(movement_info.x, movement_info.y)));
+			sCheatLog.writefromsession(this, "Disconnected for teleport hacking. Player speed: %f, Distance traveled: %f", _player->m_runSpeed, sqrt(_player->m_position.Distance2DSq(movement_info.GetMovementPosX, movement_info.GetMovementPosY())));
 			Disconnect();
 			return;
 		}
@@ -459,7 +449,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
 		// simplified: just take the fastest speed. less chance of fuckups too
 		float speed = (_player->flying_aura) ? _player->m_flySpeed : (_player->m_swimSpeed > _player-> m_runSpeed) ? _player->m_swimSpeed : _player->m_runSpeed;
 
-		_player->SDetector->AddSample(movement_info.x, movement_info.y, getMSTime(), speed);
+		_player->SDetector->AddSample(movement_info.GetMovementPostX(), movement_info.GetMovementPosY(), getMSTime(), speed);
 
 		if(_player->SDetector->IsCheatDetected())
 			_player->SDetector->ReportCheater(_player);
@@ -474,7 +464,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
 	/************************************************************************/
 	/* Make sure the co-ordinates are valid.                                */
 	/************************************************************************/
-	if(!((movement_info.y >= _minY) && (movement_info.y <= _maxY)) || !((movement_info.x >= _minX) && (movement_info.x <= _maxX)))
+	if(!((movement_info.GetMovementPostY() >= _minY) && (movement_info.GetMovementPostY() <= _maxY)) || !((movement_info.GetMovementPostX() >= _minX) && (movement_info.GetMovementPostX() <= _maxX)))
 	{
 		Disconnect();
 		return;
@@ -485,11 +475,11 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
 	/************************************************************************/
 #if 0
 	LOG_DEBUG("=========================================================");
-	LOG_DEBUG("Full movement flags: 0x%.8X", movement_info.flags);
+	LOG_DEBUG("Full movement flags: 0x%.8X", movement_info.GetMovementFlags());
 	uint32 z, b;
 	for(z = 1, b = 1; b < 32;)
 	{
-		if(movement_info.flags & z)
+		if(movement_info.GetMovementFlags() & z)
 			LOG_DEBUG("   Bit %u (0x%.8X or %u) is set!", b, z, z);
 
 		z <<= 1;
@@ -503,52 +493,28 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
 	/************************************************************************/
 #if 0
 	LOG_DEBUG("Packet: 0x%03X (%s)", recv_data.GetOpcode(), LookupName(recv_data.GetOpcode(), g_worldOpcodeNames));
-	LOG_DEBUG("Orientation: %.10f", movement_info.orientation);
+	LOG_DEBUG("Orientation: %.10f", movement_info.GetOrientation());
 #endif
-
-	/************************************************************************/
-	/* Calculate the timestamp of the packet we have to send out            */
-	/************************************************************************/
-	size_t pos = (size_t)m_MoverWoWGuid.GetNewGuidLen() + 1;
-	uint32 mstime = mTimeStamp();
-	int32 move_time;
-	if(m_clientTimeDelay == 0)
-		m_clientTimeDelay = mstime - movement_info.time;
 
 	/************************************************************************/
 	/* Copy into the output buffer.                                         */
 	/************************************************************************/
 	if(_player->m_inRangePlayers.size())
 	{
-		move_time = (movement_info.time - (mstime - m_clientTimeDelay)) + MOVEMENT_PACKET_TIME_DELAY + mstime;
-		memcpy(&movement_packet[0], recv_data.contents(), recv_data.size());
-		movement_packet[pos + 6] = 0;
+		int32 move_time = movement_info.GetMovementTime()+_latency, mTime = getMSTime();
+		if(move_time > mTime)
+			move_time = mTime;
 
-		/************************************************************************/
-		/* Distribute to all inrange players.                                   */
-		/************************************************************************/
-		for(set<Object*>::iterator itr = _player->m_inRangePlayers.begin(); itr != _player->m_inRangePlayers.end(); ++itr)
-		{
-
-			Player* p = TO< Player* >((*itr));
-
-			*(uint32*)&movement_packet[pos + 6] = uint32(move_time + p->GetSession()->m_moveDelayTime);
-
-#if defined(ENABLE_COMPRESSED_MOVEMENT) && defined(ENABLE_COMPRESSED_MOVEMENT_FOR_PLAYERS)
-			if(_player->GetPositionNC().Distance2DSq(p->GetPosition()) >= World::m_movementCompressThreshold)
-				p->AppendMovementData(recv_data.GetOpcode(), uint16(recv_data.size() + pos), movement_packet);
-			else
-				p->GetSession()->OutPacket(recv_data.GetOpcode(), uint16(recv_data.size() + pos), movement_packet);
-#else
-			p->GetSession()->OutPacket(recv_data.GetOpcode(), uint16(recv_data.size() + pos), movement_packet);
-#endif
-		}
+		WorldPacket data(recv_data.GetOpcode(), recv_data.size());
+		data << mover->GetNewGUID();
+		GetMovementInfo()->Write(data, move_time);
+		_player->SendMessageToSet(&data, false);
 	}
 
 	/************************************************************************/
 	/* Hack Detection by Classic	                                        */
 	/************************************************************************/
-	if(!movement_info.transGuid && recv_data.GetOpcode() != MSG_MOVE_JUMP && !_player->FlyCheat && !_player->flying_aura && !(movement_info.flags & MOVEFLAG_SWIMMING || movement_info.flags & MOVEFLAG_FALLING) && movement_info.z > _player->GetPositionZ() && movement_info.x == _player->GetPositionX() && movement_info.y == _player->GetPositionY())
+	if(!movement_info.GetTransportGUID() && recv_data.GetOpcode() != MSG_MOVE_JUMP && !_player->FlyCheat && !_player->flying_aura && !(movement_info.GetMovementFlags() & MOVEFLAG_SWIMMING || movement_info.GetMovementFlags() & MOVEFLAG_FALLING) && movement_info.GetMovementPosZ() > _player->GetPositionZ() && movement_info.GetMovementPosX() == _player->GetPositionX() && movement_info.GetMovementPosY() == _player->GetPositionY())
 	{
 		WorldPacket data(SMSG_MOVE_UNSET_CAN_FLY, 13);
 		data << _player->GetNewGUID();
@@ -556,7 +522,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
 		SendPacket(&data);
 	}
 
-	if((movement_info.flags & MOVEFLAG_AIR_SWIMMING) && !(movement_info.flags & MOVEFLAG_SWIMMING) && !(_player->flying_aura || _player->FlyCheat))
+	if((movement_info.GetMovementFlags() & MOVEFLAG_AIR_SWIMMING) && !(movement_info.GetMovementFlags() & MOVEFLAG_SWIMMING) && !(_player->flying_aura || _player->FlyCheat))
 	{
 		WorldPacket data(SMSG_MOVE_UNSET_CAN_FLY, 13);
 		data << _player->GetNewGUID();
@@ -581,11 +547,11 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
 			// player has finished falling
 			//if z_axisposition contains no data then set to current position
 			if(!mover->z_axisposition)
-				mover->z_axisposition = movement_info.z;
+				mover->z_axisposition = movement_info.GetMovementPosZ();
 
 			// calculate distance fallen
-			uint32 falldistance = float2int32(mover->z_axisposition - movement_info.z);
-			if(mover->z_axisposition <= movement_info.z)
+			uint32 falldistance = float2int32(mover->z_axisposition - movement_info.GetMovementPosZ());
+			if(mover->z_axisposition <= movement_info.GetMovementPosZ())
 				falldistance = 1;
 			/*Safe Fall*/
 			if((int)falldistance > mover->m_safeFall)
@@ -623,14 +589,14 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
 		else
 			//whilst player is not falling, continuously update Z axis position.
 			//once player lands this will be used to determine how far he fell.
-			if(!(movement_info.flags & MOVEFLAG_FALLING))
-				mover->z_axisposition = movement_info.z;
+			if(!(movement_info.GetMovementFlags() & MOVEFLAG_FALLING))
+				mover->z_axisposition = movement_info.GetMovementPosZ();
 	}
 
 	/************************************************************************/
 	/* Transporter Setup                                                    */
 	/************************************************************************/
-	if( ( mover->transporter_info.guid != 0 ) && ( movement_info.transGuid.GetOldGuid() == 0 ) ){
+	if( ( mover->transporter_info.guid != 0 ) && ( movement_info.GetTransportGUID().GetOldGuid() == 0 ) ){
 		/* we left the transporter we were on */
 
 		Transporter *transporter = objmgr.GetTransporter( Arcpro::Util::GUID_LOPART( mover->transporter_info.guid ) );
@@ -641,26 +607,28 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
 		_player->SpeedCheatReset();
 
 	}else{
-		if( movement_info.transGuid.GetOldGuid() != 0 ){
+		if( movement_info.GetTransportGUID().GetOldGuid() != 0 ){
 
 			if( mover->transporter_info.guid == 0 ){
-				Transporter *transporter = objmgr.GetTransporter( Arcpro::Util::GUID_LOPART( movement_info.transGuid ) );
+				Transporter *transporter = objmgr.GetTransporter( Arcpro::Util::GUID_LOPART( movement_info.GetTransportGUID() ) );
 				if( transporter != NULL )
 					transporter->AddPassenger( mover );
 				
-				/* set variables */
-				mover->transporter_info.guid = movement_info.transGuid;
-				mover->transporter_info.flags = movement_info.transUnk;
-				mover->transporter_info.x = movement_info.transX;
-				mover->transporter_info.y = movement_info.transY;
-				mover->transporter_info.z = movement_info.transZ;
+				/* Set variables */
+				mover->transporter_info.guid = movement_info.GetTransportGUID();
+				mover->transporter_info.x = movement_info.GetTransportPosX();
+				mover->transporter_info.y = movement_info.GetTransportPosY();
+				mover->transporter_info.z = movement_info.GetTransportPosZ();
+				mover->transporter_info.flags = movement_info.GetTransportTime();
+				mover->transporter_info.flags2 = movement_info.GetTransportTime2();
 			
 			}else{
-				/* no changes */
-				mover->transporter_info.flags = movement_info.transUnk;
-				mover->transporter_info.x = movement_info.transX;
-				mover->transporter_info.y = movement_info.transY;
-				mover->transporter_info.z = movement_info.transZ;
+				/* No changes */
+				mover->transporter_info.x = movement_info.GetTransportPosX();
+				mover->transporter_info.y = movement_info.GetTransportPosY();
+				mover->transporter_info.z = movement_info.GetTransportPosZ();
+				mover->transporter_info.flags = movement_info.GetTransportTime();
+				mover->transporter_info.flags2 = movement_info.GetTransportTime2();
 			}
 		}
 	}
@@ -674,8 +642,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
 	/************************************************************************/
 	/* Anti-Speed Hack Checks                                               */
 	/************************************************************************/
-
-
+	// Blank?
 
 	/************************************************************************/
 	/* Breathing System                                                     */
@@ -686,16 +653,16 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
 	/* Remove Spells                                                        */
 	/************************************************************************/
 	uint32 flags = 0;
-	if((movement_info.flags & MOVEFLAG_MOTION_MASK) != 0)
+	if((movement_info.GetMovementFlags() & MOVEFLAG_MOTION_MASK) != 0)
 		flags |= AURA_INTERRUPT_ON_MOVEMENT;
 
-	if(!(movement_info.flags & MOVEFLAG_SWIMMING || movement_info.flags & MOVEFLAG_FALLING))
+	if(!(movement_info.GetMovementFlags() & MOVEFLAG_SWIMMING || movement_info.GetMovementFlags() & MOVEFLAG_FALLING))
 		flags |= AURA_INTERRUPT_ON_LEAVE_WATER;
-	if(movement_info.flags & MOVEFLAG_SWIMMING)
+	if(movement_info.GetMovementFlags() & MOVEFLAG_SWIMMING)
 		flags |= AURA_INTERRUPT_ON_ENTER_WATER;
-	if((movement_info.flags & MOVEFLAG_TURNING_MASK) || _player->isTurning)
+	if((movement_info.GetMovementFlags() & MOVEFLAG_TURNING_MASK) || _player->isTurning)
 		flags |= AURA_INTERRUPT_ON_TURNING;
-	if(movement_info.flags & MOVEFLAG_REDIRECTED)
+	if(movement_info.GetMovementFlags() & MOVEFLAG_REDIRECTED)
 		flags |= AURA_INTERRUPT_ON_JUMP;
 
 	_player->RemoveAurasByInterruptFlag(flags);
@@ -705,12 +672,12 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
 	/************************************************************************/
 
 	// Player is the active mover
-	if(m_MoverWoWGuid.GetOldGuid() == _player->GetGUID())
+	if(movement_info.GetMovementGUID().GetOldGuid() == _player->GetGUID())
 	{
 
 		if(_player->m_CurrentTransporter == NULL)
 		{
-			if(!_player->SetPosition(movement_info.x, movement_info.y, movement_info.z, movement_info.orientation))
+			if(!_player->SetPosition(movement_info.GetMovementPosX(), movement_info.GetMovementPosY(), movement_info.GetMovementPosZ(), movement_info.GetOrientation()))
 			{
 				//extra check to set HP to 0 only if the player is dead (KillPlayer() has already this check)
 				if(_player->isAlive())
@@ -735,14 +702,14 @@ void WorldSession::HandleMovementOpcodes(WorldPacket & recv_data)
 				else
 				{
 					_player->RepopAtGraveyard(_player->GetPositionX(), _player->GetPositionY(), _player->GetPositionZ(), _player->GetMapId());
-				}//Teleport player to graveyard. Stops players from QQing..
+				} //Teleport player to graveyard. Stops players from QQing..
 			}
 		}
 	}
 	else
 	{
 		if( !mover->isRooted() )
-			mover->SetPosition(movement_info.x, movement_info.y, movement_info.z, movement_info.orientation);
+			mover->SetPosition(movement_info.GetMovementPosX(), movement_info.GetMovementPosY(), movement_info.GetMovementPosZ(), movement_info.GetOrientation());
 	}
 }
 
@@ -758,19 +725,14 @@ void WorldSession::HandleMoveNotActiveMoverOpcode(WorldPacket & recv_data)
 	WoWGuid guid;
 	recv_data >> guid;
 
-	if(guid == m_MoverWoWGuid)
+	if(guid == (GetMovementInfo()->GetMovementGUID().GetOldGuid()))
 		return;
 
-	movement_info.init(recv_data);
-
 	if((guid != uint64(0)) && (guid == _player->GetCharmedUnitGUID()))
-		m_MoverWoWGuid = guid;
+		GetMovementInfo()->Init(guid);
 	else
-		m_MoverWoWGuid.Init(_player->GetGUID());
-
-	// set up to the movement packet
-	movement_packet[0] = m_MoverWoWGuid.GetNewGuidMask();
-	memcpy(&movement_packet[1], m_MoverWoWGuid.GetNewGuid(), m_MoverWoWGuid.GetNewGuidLen());
+		GetMovementInfo()->Init(_player->GetGUID());
+		movement_info.Read(recv_data);
 }
 
 
@@ -782,7 +744,7 @@ void WorldSession::HandleSetActiveMoverOpcode(WorldPacket & recv_data)
 	uint64 guid;
 	recv_data >> guid;
 
-	if(guid != m_MoverWoWGuid.GetOldGuid())
+	if(guid != (GetMovementInfo()->GetMovementGUID().GetOldGuid()))
 	{
 		// make sure the guid is valid and we aren't cheating
 		if(!(_player->m_CurrentCharm == guid) &&
@@ -794,13 +756,9 @@ void WorldSession::HandleSetActiveMoverOpcode(WorldPacket & recv_data)
 
 		// generate wowguid
 		if(guid != 0)
-			m_MoverWoWGuid.Init(guid);
+			GetMovementInfo()->SetMovementGuid(guid);
 		else
-			m_MoverWoWGuid.Init(_player->GetGUID());
-
-		// set up to the movement packet
-		movement_packet[0] = m_MoverWoWGuid.GetNewGuidMask();
-		memcpy(&movement_packet[1], m_MoverWoWGuid.GetNewGuid(), m_MoverWoWGuid.GetNewGuidLen());
+			GetMovementInfo()->SetMovementGuid(_player->GetGUID());
 	}
 }
 
@@ -878,89 +836,155 @@ void WorldSession::HandleTeleportCheatOpcode(WorldPacket & recv_data)
 	_player->SafeTeleport(_player->GetMapId(), _player->GetInstanceID(), vec);
 }
 
-MovementInfo::MovementInfo(){
-	time = 0;
-	pitch = 0.0f;
-	redirectSin = 0.0f;
-	redirectCos = 0.0f;
-	redirect2DSpeed = 0.0f;
-	unk11 = 0;
-	unk12 = 0;
-	unk13 = 0;
-	unklast = 0;
-	unk_230 = 0;
-	x = 0.0f;
-	y = 0.0f;
-	z = 0.0f;
-	orientation = 0.0f;
-	flags = 0;
-	redirectVelocity = 0.0f;
-	transGuid = 0;
-	transX = 0.0f;
-	transY = 0.0f;
-	transZ = 0.0f;
-	transO = 0.0f;
-	transUnk = 0.0f;
-	transUnk_2 = 0;
-}
-
-void MovementInfo::init(WorldPacket & data)
+// Movement Info
+MovementInfo::MovementInfo()
 {
-	transGuid = 0;
-	unk13 = 0;
-	data >> flags >> unk_230 >> time;
-	data >> x >> y >> z >> orientation;
-
-	if(flags & MOVEFLAG_TRANSPORT)
-	{
-		data >> transGuid >> transX >> transY >> transZ >> transO >> transUnk >> transUnk_2;
-	}
-	if(flags & (MOVEFLAG_SWIMMING | MOVEFLAG_AIR_SWIMMING) || unk_230 & 0x20)
-	{
-		data >> pitch;
-	}
-	if(flags & MOVEFLAG_REDIRECTED)
-	{
-		data >> redirectVelocity >> redirectSin >> redirectCos >> redirect2DSpeed;
-	}
-	if(flags & MOVEFLAG_SPLINE_MOVER)
-	{
-		data >> unk12;
-	}
-
-	data >> unklast;
-	if(data.rpos() != data.wpos())
-	{
-		if(data.rpos() + 4 == data.wpos())
-			data >> unk13;
-		else
-			LOG_DEBUG("Extra bits of movement packet left");
-	}
+	MoverGuid = 0;
+	MovementFlags = 0;
+	MovementFlags2 = 0;
+	PosX = PosY = PosZ = Orientation = 0.0f;
+	MoveTime = 0;
+	TransGuid = 0;
+	TransSeat = 0;
+	TransX = TransY = TransZ = TransO = 0.0f;
+	TransTime = TransTime2 = 0;
+	Pitch = 0.0f;
+	FallTime = 0;
+	JumpVelocity = JumpSinAngle = JumpCosAngle = JumpXYSpeed = 0.0f;
+	SplineAngle = 0.0f;
+	m_MovementCounter = 0;
 }
 
-void MovementInfo::write(WorldPacket & data)
+MovementInfo::~MovementInfo()
 {
-	data << flags << unk_230 << getMSTime();
 
-	data << x << y << z << orientation;
-
-	if(flags & MOVEFLAG_TRANSPORT)
-	{
-		data << transGuid << transX << transY << transZ << transO << transUnk << transUnk_2;
-	}
-	if(flags & MOVEFLAG_SWIMMING)
-	{
-		data << pitch;
-	}
-	if(flags & MOVEFLAG_FALLING)
-	{
-		data << redirectVelocity << redirectSin << redirectCos << redirect2DSpeed;
-	}
-	if(flags & MOVEFLAG_SPLINE_MOVER)
-	{
-		data << unk12;
-	}
-	data << unklast;
-	if(unk13)
-		data << unk13;
 }
+
+// Reset our Data
+void MovementInfo::Init(uint64 guid)
+{
+	MoverGuid = guid;
+	MovementFlags = 0;
+	MovementFlags2 = 0;
+	PosX = PosY = PosZ = Orientation = 0.0f;
+	MoveTime = 0;
+	TransGuid = 0;
+	TransSeat = 0;
+	TransX = TransY = TransZ = TransO = 0.0f;
+	TransTime = TransTime2 = 0;
+	Pitch = 0.0f;
+	FallTime = 0;
+	JumpVelocity = JumpSinAngle = JumpCosAngle = JumpXYSpeed = 0.0f;
+	SplineAngle = 0.0f;
+	m_MovementCounter = 0;
+}
+
+void MovementInfo::Read(ByteBuffer data)
+{
+	data >> MovementFlags >> MovementFlags2 >> MoveTime;
+	data >> PosX >> PosY >> PosZ >> Orientation;
+	
+	if(MovementFlags & MOVEFLAG_TRANSPORT)
+	{
+		data >> TransGuid;
+		data >> TransX;
+		data >> TransY;
+		data >> TransZ;
+		data >> TransO;
+		data >> TransTime;
+		data >> TransSeat;
+		
+		if(MovementFlag2 & MOVEFLAG2_INTERPOLATED_MOVE)
+			data >> TransTime2;
+	}
+
+	if((MovementFlags & MOVEFLAG_SWIMMING|MOVEFLAG_AIR_SWIMMING) || (MovementFlags2 & MOVEFLAG2_ALLOW_PITCHING))
+	{
+		data >> Pitch;
+	}
+
+	if(MovementFlags2 & MOVEFLAG2_INTERPOLATED_TURN)
+	{
+		data >> FallTime;
+		data >> JumpVelocity;
+
+		if(MovementFlags & MOVEFLAG_REDIRECTED)
+		{
+			data >> JumpSinAngle;
+			data >> JumpCosAngle;
+			data >> JumpXYSpeed;
+		}
+	}
+
+	if (MovementFlags & MOVEFLAG_SPLINE_MOVER)
+	{
+		data >> SplineAngle;
+	} 
+}
+
+void MovementInfo::Write(ByteBuffer data, uint32 time)
+{
+	if(time == 0)
+		time = getMSTime();
+	
+	printf("%u %u %f %f %f %f\n", MovementFlags, MovementFlags2, PosX, PosY, PosZ, Orientation);
+	data << MovementFlags << MovementFlags2 << time;
+	data << PosX << PosY << PosZ << Orientation;
+	
+	if(MovementFlags & MOVEFLAG_TRANSPORT)
+	{
+		data << TransGuid;
+		data << TransX;
+		data << TransY;
+		data << TransZ;
+		data << TransO;
+		data << TransTime;
+		data << TransSeat;
+		
+		if(MovementFlags2 & MOVEFLAG2_INTERPOLATED_MOVE)
+			data << TransTime2;
+	}
+	
+	if((MovementFlags & MOVEFLAG_SWIMMING|MOVEFLAG_AIR_SWIMMING) || (MovementFlags2 & MOVEFLAG2_ALLOW_PITCHING)) 
+	{
+		data << Pitch;
+	}
+	
+	if(MovementFlags2 & MOVEFLAG2_INTERPOLATED_TURN)
+	{
+		data << FallTime;
+		data << JumpVelocity;
+		
+		if(MovementFlags & MOVEFLAG_REDIRECTED)
+		{
+			data << JumpSinAngle;
+			data << JumpCosAngle;
+			data << JumpXYSpeed;
+		}
+	}
+	
+	if(MovementFlags & MOVEFLAG_SPLINE_MOVER)
+	{
+		data << SplineAngle;
+	}
+}
+
+void MovementInfo::SetMovementPos(float x, float y, float z, float o)
+{
+	PosX = x;
+	PosY = y;
+	PosZ = z;
+	Orentation = o;
+	MoveTime = getMSTime();
+}
+
+void MovementInfo::SetTransportPosition(float x, float y, float z, float o)
+{
+	TransX = x;
+	TransY = y;
+	TransZ = z;
+	TransO = o;
+	TransTime = getMSTime();
+}
+
+// End MovementInfo Class

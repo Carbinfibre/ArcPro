@@ -430,18 +430,18 @@ enum DrunkenState
 
 static const uint32 TalentTreesPerClass[DRUID + 1][3] =
 {
-	{ 0, 0, 0 },        // NONE
-	{ 161, 163, 164 },  // WARRIOR
-	{ 382, 383, 381 },  // PALADIN
-	{ 361, 363, 362 },  // HUNTER
-	{ 182, 181, 183 },  // ROGUE
-	{ 201, 202, 203 },  // PRIEST
-	{ 398, 399, 400 },  // DEATH KNIGHT
-	{ 261, 263, 262 },  // SHAMAN
-	{ 81, 41, 61 },     // MAGE
-	{ 302, 303, 301 },  // WARLOCK
-	{ 0, 0, 0 },        // NONE
-	{ 283, 281, 282 },  // DRUID
+	{  0,   0,   0}, // Unused
+	{746, 815, 845}, // Warrior
+	{831, 839, 855}, // Paladin
+	{807, 809, 811}, // Hunter
+	{181, 182, 183}, // Rogue
+	{760, 795, 831}, // Priest
+	{398, 399, 400}, // DeathKnight
+	{261, 262, 263}, // Shaman
+	{799, 823, 851}, // Mage
+	{865, 867, 871}, // Warlock
+	{  0,   0,   0}, // Unused
+	{748, 750, 752}, // Druid
 };
 
 #pragma pack(push,1)
@@ -760,6 +760,7 @@ public:
 
 	void AddTalent(uint32 talentid, uint8 rankid);
 
+	uint32 ActiveTree;
 	std::map<uint32, uint8> talents;
 	uint16 glyphs[GLYPHS_COUNT];
 	ActionButton mActions[PLAYER_ACTION_BUTTON_COUNT];
@@ -2095,6 +2096,7 @@ class SERVER_DECL Player : public Unit
 		void CalculateBaseStats();
 		uint32 load_health;
 		uint32 load_mana;
+		void SendObjectUpdate(uint64 guid);
 		void CompleteLoading();
 		void OnPushToWorld();
 		void OnPrePushToWorld();

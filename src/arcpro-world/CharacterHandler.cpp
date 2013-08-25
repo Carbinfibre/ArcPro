@@ -741,7 +741,7 @@ void WorldSession::FullLogin(Player* plr)
 	Log.Debug("WorldSession", "Fully loading player %u", plr->GetLowGUID());
 
 	SetPlayer(plr);
-	m_MoverWoWGuid.Init(plr->GetGUID());
+	movement_info.Init(plr->GetGUID());
 
 	MapMgr* mgr = sInstanceMgr.GetInstance(plr);
 	if(mgr && mgr->m_battleground)
@@ -774,10 +774,6 @@ void WorldSession::FullLogin(Player* plr)
 			plr->m_mapId = plr->GetBindMapId();
 		}
 	}
-
-	// copy to movement array
-	movement_packet[0] = m_MoverWoWGuid.GetNewGuidMask();
-	memcpy(&movement_packet[1], m_MoverWoWGuid.GetNewGuid(), m_MoverWoWGuid.GetNewGuidLen());
 
 	// world preload
 	uint32 VMapId;
@@ -813,6 +809,9 @@ void WorldSession::FullLogin(Player* plr)
 	}
 
 	plr->SendLoginVerifyWorld(VMapId, VX, VY, VZ, VO);
+	
+	// Copy to movement info
+	movement_info.SetMovementPos(VX, VY, VZ, VO);
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////
 	// send voicechat state - active/inactive

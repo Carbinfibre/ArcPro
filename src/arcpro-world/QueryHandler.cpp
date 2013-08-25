@@ -39,12 +39,10 @@ void WorldSession::HandleNameQueryOpcode(WorldPacket & recv_data)
 
 	WoWGuid pguid((uint64)pn->guid); //VLack: The usual new style guid handling on 3.1.2
 	WorldPacket data(SMSG_NAME_QUERY_RESPONSE, strlen(pn->name) + 35);
-//	data << pn->guid << uint32(0);	//highguid
 	data << pguid << uint8(0); //VLack: usual, new-style guid with an uint8
 	data << pn->name;
 	data << uint8(0);	   // this is a string showed besides players name (eg. in combat log), a custom title ?
 	data << uint8(pn->race) << uint8(pn->gender) << uint8(pn->cl);
-//	data << uint8(0);			// 2.4.0, why do i get the feeling blizz is adding custom classes or custom titles? (same thing in who list)
 	data << uint8(0); //VLack: tell the server this name is not declined... (3.1 fix?)
 	SendPacket(&data);
 }
@@ -152,7 +150,7 @@ void WorldSession::HandleGameObjectQueryOpcode(WorldPacket & recv_data)
 {
 	CHECK_INWORLD_RETURN
 
-	CHECK_PACKET_SIZE(recv_data, 12);
+	CHECK_PACKET_SIZE(recv_data, 10);
 	WorldPacket data(SMSG_GAMEOBJECT_QUERY_RESPONSE, 900);
 
 	uint32 entryID;
@@ -211,14 +209,23 @@ void WorldSession::HandleGameObjectQueryOpcode(WorldPacket & recv_data)
 	data << goinfo->Unknown12;
 	data << goinfo->Unknown13;
 	data << goinfo->Unknown14;
-	data << float(goinfo->Size);       // scaling of the GO
+	
+	data << uint32(0);
+	data << uint32(0);
+	data << uint32(0);
+	data << uint32(0);
+	data << uint32(0);
+	data << uint32(0);
+	data << uint32(0);
+	data << uint32(0);
 
-	// questitems that the go can contain
+	// Questitems that the go can contain
 	for(uint32 i = 0; i < 6; ++i)
 	{
 		data << uint32(goinfo->QuestItems[i]);
 
 	}
+	data < uint32(0); // Go expansion field
 
 	SendPacket(&data);
 }
