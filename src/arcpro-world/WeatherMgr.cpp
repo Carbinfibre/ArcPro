@@ -21,17 +21,54 @@
 
 #include "StdAfx.h"
 
+// Weather.dbc
 /// Weather defines
 enum WeatherTypes
 {
-    WEATHER_TYPE_NORMAL            = 0, // NORMAL
-    WEATHER_TYPE_FOG               = 1, // FOG --> current value irrelevant
-    WEATHER_TYPE_RAIN              = 2, // RAIN
-    WEATHER_TYPE_HEAVY_RAIN        = 4, // HEAVY_RAIN
-    WEATHER_TYPE_SNOW              = 8, // SNOW
-    WEATHER_TYPE_SANDSTORM         = 16 // SANDSTORM
+    WEATHER_TYPE_NORMAL            	= 0, // NORMAL
+    WEATHER_TYPE_RAIN               = 1, // RAIN
+    WEATHER_TYPE_SNOW              	= 2, // RAIN
+	WEATHER_TYPE_UNK1				= 3,
+    WEATHER_TYPE_HEAVY_RAIN        	= 4, // HEAVY_RAIN <-- MENTAL_NOTE: Remove this; STORM is better
+    WEATHER_TYPE_STORM        		= 4, // STORM
+	WEATHER_TYPE_UNK1				= 5,
+	WEATHER_TYPE_UNK1				= 6,
+	WEATHER_TYPE_UNK1				= 7,
+	WEATHER_TYPE_UNK1				= 8,
+    WEATHER_TYPE_SANDSTORM         	= 16 // SANDSTORM
+	WEATHER_TYPE_UNK1				= 21,
+	WEATHER_TYPE_UNK1				= 22,
+	WEATHER_TYPE_UNK1				= 41,
+	WEATHER_TYPE_UNK1				= 42,
+	WEATHER_TYPE_UNK1				= 61,
+	WEATHER_TYPE_UNK1				= 81,
+	WEATHER_TYPE_UNK1				= 83,
+	WEATHER_TYPE_UNK1				= 84,
+	WEATHER_TYPE_UNK1				= 85,
+    WEATHER_TYPE_THUNDERS        	= 86, // Thunder Storm
+	WEATHER_TYPE_UNK1				= 87,
+	WEATHER_TYPE_BLACKRAIN			= 90
+	WEATHER_TYPE_UNK1				= 91,
+	WEATHER_TYPE_UNK1				= 96,
+	WEATHER_TYPE_UNK1				= 97,
+	WEATHER_TYPE_UNK1				= 98,
+	WEATHER_TYPE_UNK1				= 99,
+	WEATHER_TYPE_UNK1				= 101,
+	WEATHER_TYPE_UNK1				= 102,
+	WEATHER_TYPE_UNK1				= 103,
+	WEATHER_TYPE_UNK1				= 104,
+	WEATHER_TYPE_UNK1				= 105,
+	WEATHER_TYPE_UNK1				= 106,
+	WEATHER_TYPE_UNK1				= 107,
+	WEATHER_TYPE_UNK1				= 108,
+	WEATHER_TYPE_UNK1				= 109,
+	WEATHER_TYPE_UNK1				= 123,
+	WEATHER_TYPE_UNK1				= 139,
+//    WEATHER_TYPE_FOG = // FOG
 };
 
+// Out-dated; Patch 4.3.4 needed
+/// Weather sounds defines
 enum WeatherSounds
 {
     WEATHER_NOSOUND                = 0,
