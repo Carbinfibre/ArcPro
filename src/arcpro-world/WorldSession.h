@@ -19,11 +19,6 @@
  *
  */
 
-//
-//
-// WorldSession.h
-//
-
 #ifndef __WORLDSESSION_H
 #define __WORLDSESSION_H
 
@@ -382,7 +377,7 @@ class SERVER_DECL WorldSession
 			_recvQueue.Push(packet);
 		}
 
-		void OutPacket(uint16 opcode, uint16 len, const void* data)
+		void OutPacket(uint32 opcode, uint16 len, const void* data)
 		{
 			if(_socket && _socket->IsConnected())
 				_socket->OutPacket(opcode, len, data);
@@ -590,7 +585,6 @@ class SERVER_DECL WorldSession
 		void HandleDestroyItemOpcode(WorldPacket & recvPacket);
 		void HandleAutoEquipItemOpcode(WorldPacket & recvPacket);
 		void HandleAutoEquipItemSlotOpcode(WorldPacket & recvPacket);
-		void HandleItemQuerySingleOpcode(WorldPacket & recvPacket);
 		void HandleSellItemOpcode(WorldPacket & recvPacket);
 		void HandleBuyItemInSlotOpcode(WorldPacket & recvPacket);
 		void HandleBuyItemOpcode(WorldPacket & recvPacket);
