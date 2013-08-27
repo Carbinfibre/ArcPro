@@ -20,7 +20,8 @@
 
 #include "StdAfx.h"
 
-void WorldSession::HandleDismissVehicle( WorldPacket &recv_data ){
+void WorldSession::HandleDismissVehicle( WorldPacket &recv_data )
+{
 	uint64 current_vehicle_guid = _player->GetCharmedUnitGUID();
 
 	// wait what no vehicle
@@ -38,21 +39,23 @@ void WorldSession::HandleDismissVehicle( WorldPacket &recv_data ){
 }
 
 
-void WorldSession::HandleChangeVehicleSeat( WorldPacket &recv_data ){
-	if( _player->GetCurrentVehicle() == NULL )
+void WorldSession::HandleChangeVehicleSeat( WorldPacket &recv_data )
+{
+/*	if( _player->GetCurrentVehicle() == NULL )
 		return;
 
-	switch( recv_data.GetOpcode() ){
+	switch( recv_data.GetOpcode() )
+	{
 		case CMSG_REQUEST_VEHICLE_PREV_SEAT:
 			_player->GetCurrentVehicle()->MovePassengerToPrevSeat( _player );
 			break;
-
+		
 		case CMSG_REQUEST_VEHICLE_NEXT_SEAT:
 			_player->GetCurrentVehicle()->MovePassengerToNextSeat( _player );
-			break;
 
 		// Used when switching from a normal seat to a controlling seat, or to an accessory
-		case CMSG_REQUEST_VEHICLE_SWITCH_SEAT:{
+		case CMSG_REQUEST_VEHICLE_SWITCH_SEAT:
+		{
 			WoWGuid vehicle;
 			uint8 seat = 0;
 			
@@ -77,10 +80,11 @@ void WorldSession::HandleChangeVehicleSeat( WorldPacket &recv_data ){
 				u->GetVehicleComponent()->AddPassengerToSeat( _player, seat );
 			}
 
-			break;}
+		}break;
 
 	    // Used when switching from controlling seat to accessory, or from accessory to accessory
-		case CMSG_CHANGE_SEATS_ON_CONTROLLED_VEHICLE:{
+		case CMSG_CHANGE_SEATS_ON_CONTROLLED_VEHICLE:
+		{
 			WoWGuid src_guid;
 			WoWGuid dst_guid;
 			uint8 seat = 0;			
@@ -119,12 +123,13 @@ void WorldSession::HandleChangeVehicleSeat( WorldPacket &recv_data ){
 				dst_vehicle->GetVehicleComponent()->AddPassengerToSeat( _player, seat );
 			}
 
-			break;}
-	}
+		}break;
+	}*/
 }
 
 
-void WorldSession::HandleRemoveVehiclePassenger( WorldPacket &recv_data ){
+void WorldSession::HandleRemoveVehiclePassenger( WorldPacket &recv_data )
+{
 	Vehicle *v = NULL;
 	if( _player->IsVehicle() )
 		v = _player->GetVehicleComponent();
@@ -148,7 +153,8 @@ void WorldSession::HandleRemoveVehiclePassenger( WorldPacket &recv_data ){
 }
 
 
-void WorldSession::HandleLeaveVehicle( WorldPacket &recv_data ){
+void WorldSession::HandleLeaveVehicle( WorldPacket &recv_data )
+{
 	if( _player->GetCurrentVehicle() == NULL )
 		return;
 
@@ -156,7 +162,8 @@ void WorldSession::HandleLeaveVehicle( WorldPacket &recv_data ){
 }
 
 
-void WorldSession::HandleEnterVehicle( WorldPacket &recv_data ){
+void WorldSession::HandleEnterVehicle( WorldPacket &recv_data )
+{
 	uint64 guid;
 
 	recv_data >> guid;

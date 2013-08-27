@@ -115,7 +115,7 @@ void Vehicle::AddPassenger( Unit *passenger ){
 }
 
 void Vehicle::AddPassengerToSeat( Unit *passenger, uint32 seatid ){
-	if( seats[ seatid ]->HasPassenger() )
+/*	if( seats[ seatid ]->HasPassenger() )
 		return;
 
 	if( !seats[ seatid ]->Usable() )
@@ -210,7 +210,7 @@ void Vehicle::AddPassengerToSeat( Unit *passenger, uint32 seatid ){
 			if( !HasEmptySeat() )
 				c->GetScript()->OnVehicleFull();
 		}
-	}
+	}*/
 }
 
 void Vehicle::EjectPassenger( Unit *passenger ){
