@@ -19,10 +19,6 @@
  *
  */
 
-//
-// WorldSession.cpp
-//
-
 #include "StdAfx.h"
 
 OpcodeHandler WorldPacketHandlers[NUM_MSG_TYPES];
@@ -1446,8 +1442,7 @@ void WorldSession::SendChatPacket(WorldPacket* data, uint32 langpos,
 		*(uint32*) & data->contents()[langpos] = lang;
 	else
 	{
-		if(CanUseCommand('c')
-		        || (originator && originator->CanUseCommand('c')))
+		if(CanUseCommand('c') || (originator && originator->CanUseCommand('c')) || sWorld.interfaction_chat)
 			*(uint32*) & data->contents()[langpos] = LANG_UNIVERSAL;
 		else
 			*(uint32*) & data->contents()[langpos] = lang;
