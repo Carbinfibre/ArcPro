@@ -5445,9 +5445,9 @@ class LuaUnit
 			uint32 spec = luaL_checkint(L, 1); //0 or 1
 			uint32 points = luaL_checkint(L, 2);
 			TO_PLAYER(ptr)->m_specs[spec].SetTP( points );
-			
+
 			if( spec == TO_PLAYER(ptr)->m_talentActiveSpec )
-				TO_PLAYER(ptr)->SetUInt32Value( PLAYER_CHARACTER_POINTS1, points );
+				TO_PLAYER(ptr)->SetCurrentTalentPoints(points);
 
 			TO_PLAYER(ptr)->smsg_TalentsInfo(false);
 			return 0;
