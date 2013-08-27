@@ -299,37 +299,40 @@ class SERVER_DECL ByteBuffer
 			_wpos = wpos;
 			return _wpos;
 		}
+		
+		template<typename T> void read_skip() { read_skip(sizeof(T)); }
+		template<> inline void read_skip<char*>() { std::string temp; *this >> temp; }
+		template<> inline void read_skip<char const*>() { read_skip<char*>(); }
+		template<> inline void read_skip<std::string>() { read_skip<char*>(); }
+
+		void read_skip(size_t skip)
+		{
+			if(_rpos + skip > size())
+				throw error();
+			_rpos += skip;
+		}
 
 		template <typename T> T read()
 		{
+			if(_rpos + sizeof(T) > size ())
+				throw error();
 			T r = read<T>(_rpos);
 			_rpos += sizeof(T);
 			return r;
 		};
+
 		template <typename T> T read(size_t pos) const
 		{
-			//ASSERT(pos + sizeof(T) <= size());
-			if(pos + sizeof(T) > size())
-			{
-				return (T)0;
-			}
-			else
-			{
-				return *((T*)&_storage[pos]);
-			}
+			if(_rpos + sizeof(T) > size ())
+				throw error();
+			return *(T)&_storage[pos]);
 		}
 
 		void read(uint8* dest, size_t len)
 		{
-			if(LIKELY(_rpos + len <= size()))
-			{
-				memcpy(dest, &_storage[_rpos], len);
-			}
-			else
-			{
-				//throw error();
-				memset(dest, 0, len);
-			}
+			if(_rpos + len > size ())
+				throw error();
+			memcpy(dest, &_storage[_rpos], len);
 			_rpos += len;
 		}
 
@@ -366,11 +369,11 @@ class SERVER_DECL ByteBuffer
 			// then think some more
 			// then use something else
 			// -- qz
-			// ASSERT(size() < 10000000);
-
-
-			// this way hopefully people will report the callstack after it "crashes"
-			assert(size() < 10000000);
+			if(_wpos+cnt > 10000000)
+				throw error();
+			if(size() > 10000000)
+				throw error();
+			ASSERT(size() < 10000000);
 
 			if(_storage.size() < _wpos + cnt)
 				_storage.resize(_wpos + cnt);
@@ -417,7 +420,8 @@ class SERVER_DECL ByteBuffer
 
 		void put(size_t pos, const uint8* src, size_t cnt)
 		{
-			ASSERT(pos + cnt <= size());
+			if(pos + cnt > size())
+				throw error();
 			memcpy(&_storage[pos], src, cnt);
 		}
 		//void insert(size_t pos, const uint8 *src, size_t cnt) {
