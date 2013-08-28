@@ -136,9 +136,10 @@ void Player::SendLogXPGain(uint64 guid, uint32 NormalXP, uint32 RestedXP, bool t
 
 void Player::SendCastResult(uint32 SpellId, uint8 ErrorMessage, uint8 MultiCast, uint32 Extra)
 {
+	if(ErrorMessage == SPELL_FAILED_SUCCESS)
+		return;
 
 	WorldPacket data(SMSG_CAST_FAILED, 80);
-
 	data << uint8(MultiCast);
 	data << uint32(SpellId);
 	data << uint8(ErrorMessage);
@@ -260,13 +261,13 @@ void Player::SendDungeonDifficulty()
 
 void Player::SendRaidDifficulty()
 {
-	WorldPacket data(MSG_SET_RAID_DIFFICULTY, 12);
+/*	WorldPacket data(MSG_SET_RAID_DIFFICULTY, 12);
 
 	data << uint32(m_RaidDifficulty);
 	data << uint32(1);
 	data << uint32(InGroup());
 
-	m_session->SendPacket(&data);
+	m_session->SendPacket(&data);*/
 }
 
 void Player::SendInstanceDifficulty(uint32 difficulty)
@@ -281,14 +282,13 @@ void Player::SendInstanceDifficulty(uint32 difficulty)
 
 void Player::SendNewDrunkState(uint32 state, uint32 itemid)
 {
-
-	WorldPacket data(SMSG_CROSSED_INEBRIATION_THRESHOLD, (8 + 4 + 4));
+/*	WorldPacket data(SMSG_CROSSED_INEBRIATION_THRESHOLD, (8 + 4 + 4));
 
 	data << GetGUID();
 	data << uint32(state);
 	data << uint32(itemid);
 
-	SendMessageToSet(&data, true);
+	SendMessageToSet(&data, true);*/
 }
 
 /*Loot type MUST be
@@ -605,10 +605,6 @@ void Player::SendInitialLogonPackets()
 	smsg_TalentsInfo(false);
 	smsg_InitialSpells();
 
-	data.Initialize(SMSG_SEND_UNLEARN_SPELLS);
-	data << uint32(0); // count, for(count) uint32;
-	GetSession()->SendPacket(&data);
-
 	data.Initialize(0x0BDE8);
 	data << uint32(0);
 	m_session->SendPacket(&data);
@@ -785,47 +781,46 @@ void Player::SendDestroyObject(uint64 GUID)
 
 void Player::SendEquipmentSetList()
 {
-
-	WorldPacket data(SMSG_EQUIPMENT_SET_LIST, 1000);
+/*	WorldPacket data(SMSG_EQUIPMENT_SET_LIST, 1000);
 
 	m_ItemInterface->m_EquipmentSets.FillEquipmentSetListPacket(data);
 
 	m_session->SendPacket(&data);
 
-	LOG_DEBUG("Sent SMSG_EQUIPMENT_SET_LIST.");
+	LOG_DEBUG("Sent SMSG_EQUIPMENT_SET_LIST.");*/
 }
 
 void Player::SendEquipmentSetSaved(uint32 setID, uint32 setGUID)
 {
-	WorldPacket data(SMSG_EQUIPMENT_SET_SAVED, 12);
+/*	WorldPacket data(SMSG_EQUIPMENT_SET_SAVED, 12);
 
 	data << uint32(setID);
 	data << WoWGuid(uint64(setGUID));
 
 	m_session->SendPacket(&data);
 
-	LOG_DEBUG("Sent SMSG_EQUIPMENT_SET_SAVED.");
+	LOG_DEBUG("Sent SMSG_EQUIPMENT_SET_SAVED.");*/
 }
 
 void Player::SendEquipmentSetUseResult(uint8 result)
 {
-	WorldPacket data(SMSG_EQUIPMENT_SET_USE_RESULT, 1);
+/*	WorldPacket data(SMSG_EQUIPMENT_SET_USE_RESULT, 1);
 
 	data << uint8(result);
 
 	m_session->SendPacket(&data);
 
-	LOG_DEBUG("SMSG_EQUIPMENT_SET_USE_RESULT sent.");
+	LOG_DEBUG("SMSG_EQUIPMENT_SET_USE_RESULT sent.");*/
 }
 
 void Player::SendTotemCreated(uint8 slot, uint64 GUID, uint32 duration, uint32 spellid)
 {
-	WorldPacket data(SMSG_TOTEM_CREATED, 17);
+/*	WorldPacket data(SMSG_TOTEM_CREATED, 17);
 	data << uint8(slot);
 	data << uint64(GUID);
 	data << uint32(duration);
 	data << uint32(spellid);
-	m_session->SendPacket(&data);
+	m_session->SendPacket(&data);*/
 }
 
 void Player::SendInitialWorldstates(){

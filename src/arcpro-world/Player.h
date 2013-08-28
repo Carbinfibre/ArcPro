@@ -103,6 +103,9 @@ enum Races
     RACE_TROLL = 8,
     RACE_BLOODELF = 10,
     RACE_DRAENEI = 11,
+	RACE_WORGEN = ,
+	RACE_GOBLIN = 
+//	RACE_PANDAREN
 };
 
 enum PlayerStatus
@@ -602,9 +605,9 @@ enum MeetingStoneQueueStatus
 };
 enum ItemPushResultTypes
 {
-    ITEM_PUSH_TYPE_LOOT			 = 0x00000000,
-    ITEM_PUSH_TYPE_RECEIVE		  = 0x00000001,
-    ITEM_PUSH_TYPE_CREATE		   = 0x00000002,
+    ITEM_PUSH_TYPE_LOOT		= 0x00000000,
+    ITEM_PUSH_TYPE_RECEIVE	= 0x00000001,
+    ITEM_PUSH_TYPE_CREATE	= 0x00000002
 };
 struct WeaponModifier
 {
@@ -1276,9 +1279,10 @@ class SERVER_DECL Player : public Unit
 		/************************************************************************/
 		/* Guilds                                                               */
 		/************************************************************************/
+		uint32 m_PlayerGuildId;
 		Guild* 		GetGuild() { return m_playerInfo->guild; }
-		bool			IsInGuild() {return (m_uint32Values[PLAYER_GUILDID] != 0) ? true : false;}
-		uint32		GetGuildId() { return m_uint32Values[PLAYER_GUILDID]; }
+		bool			IsInGuild() {return (m_PlayerGuildId != 0) ? true : false;}
+		uint32		GetGuildId() { return m_PlayerGuildId; }
 		void						SetGuildId(uint32 guildId);
 		uint32		GetGuildRank() { return m_uint32Values[PLAYER_GUILDRANK]; }
 		GuildRank*	GetGuildRankS() { return m_playerInfo->guildRank; }
@@ -1988,35 +1992,39 @@ class SERVER_DECL Player : public Unit
 		uint32 GetXp() { return GetUInt32Value(PLAYER_XP); }
 		void SetNextLevelXp(uint32 xp) { SetUInt32Value(PLAYER_NEXT_LEVEL_XP, xp); }
 
-		void SetTalentPointsForAllSpec( uint32 amt ){
-			m_specs[ 0 ].SetTP( amt );
+		void SetTalentPointsForAllSpec( uint32 amt )
+		{
+/*			m_specs[ 0 ].SetTP( amt );
 			m_specs[ 1 ].SetTP( amt );
 			SetUInt32Value( PLAYER_CHARACTER_POINTS1, amt );
-			smsg_TalentsInfo( false );
+			smsg_TalentsInfo( false );*/
 		}
 
-		void AddTalentPointsToAllSpec( uint32 amt ){
-			m_specs[ 0 ].SetTP( m_specs[ 0 ].GetTP() + amt );
+		void AddTalentPointsToAllSpec( uint32 amt )
+		{
+/*			m_specs[ 0 ].SetTP( m_specs[ 0 ].GetTP() + amt );
 			m_specs[ 1 ].SetTP( m_specs[ 1 ].GetTP() + amt );
 			SetUInt32Value( PLAYER_CHARACTER_POINTS1, GetUInt32Value( PLAYER_CHARACTER_POINTS1 ) + amt );
-			smsg_TalentsInfo( false );
+			smsg_TalentsInfo( false );*/
 		}
 
-		void SetCurrentTalentPoints( uint32 points ){
-			m_specs[ m_talentActiveSpec ].SetTP( points );
+		void SetCurrentTalentPoints( uint32 points )
+		{
+/*			m_specs[ m_talentActiveSpec ].SetTP( points );
 			SetUInt32Value( PLAYER_CHARACTER_POINTS1, points );
-			smsg_TalentsInfo( false );
+			smsg_TalentsInfo( false );*/
 		}
 
-		uint32 GetCurrentTalentPoints(){
-			uint32 points = GetUInt32Value( PLAYER_CHARACTER_POINTS1 );
+		uint32 GetCurrentTalentPoints()
+		{
+/*			uint32 points = GetUInt32Value( PLAYER_CHARACTER_POINTS1 );
 			Arcpro::Util::ArcproAssert( points == m_specs[ m_talentActiveSpec ].GetTP() );
-			return points;
+			return points;*/
 		}
 
-		void SetPrimaryProfessionPoints(uint32 amt) { SetUInt32Value(PLAYER_CHARACTER_POINTS2, amt); }
-		void ModPrimaryProfessionPoints(int32 amt) { ModUnsigned32Value(PLAYER_CHARACTER_POINTS2, amt); }
-		uint32 GetPrimaryProfessionPoints() { return GetUInt32Value(PLAYER_CHARACTER_POINTS2); }
+		void SetPrimaryProfessionPoints(uint32 amt) { SetUInt32Value(PLAYER_CHARACTER_POINTS, amt); }
+		void ModPrimaryProfessionPoints(int32 amt) { ModUnsigned32Value(PLAYER_CHARACTER_POINTS, amt); }
+		uint32 GetPrimaryProfessionPoints() { return GetUInt32Value(PLAYER_CHARACTER_POINTS); }
 
 		void ModPosDamageDoneMod(uint32 school, uint32 value) { ModUnsigned32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_POS + school, value); }
 		uint32 GetPosDamageDoneMod(uint32 school) { return GetUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_POS + school); }
@@ -2027,16 +2035,19 @@ class SERVER_DECL Player : public Unit
 		void ModHealingDoneMod(uint32 value) { ModUnsigned32Value(PLAYER_FIELD_MOD_HEALING_DONE_POS, value); }
 		uint32 GetHealingDoneMod() { return GetUInt32Value(PLAYER_FIELD_MOD_HEALING_DONE_POS); }
 
-		void SetAmmoId(uint32 id) { SetUInt32Value(PLAYER_AMMO_ID, id); }
-		uint32 GetAmmoId() { return GetUInt32Value(PLAYER_AMMO_ID); }
+		uint32 ammoId;
+		void SetAmmoId(uint32 id) { ammoId = id; }
+		uint32 GetAmmoId() { return ammoId; }
 
-		void SetHonorCurrency(uint32 value) { SetUInt32Value(PLAYER_FIELD_HONOR_CURRENCY, value); }
-		void ModHonorCurrency(uint32 value) { ModUnsigned32Value(PLAYER_FIELD_HONOR_CURRENCY, value); }
-		uint32 GetHonorCurrency() { return GetUInt32Value(PLAYER_FIELD_HONOR_CURRENCY); }
+		uint32 m_honor
+		void SetHonorCurrency(uint32 value) { m_honor = value; }
+		void ModHonorCurrency(uint32 value) { m_honor += value; }
+		uint32 GetHonorCurrency() { return m_honor; }
 
-		void SetArenaCurrency(uint32 value) { SetUInt32Value(PLAYER_FIELD_ARENA_CURRENCY, value); }
-		void ModArenaCurrency(uint32 value) { ModUnsigned32Value(PLAYER_FIELD_ARENA_CURRENCY, value); }
-		uint32 GetArenaCurrency() { return GetUInt32Value(PLAYER_FIELD_ARENA_CURRENCY); }
+		uint32 m_arena
+		void SetArenaCurrency(uint32 value) { m_arena = value); }
+		void ModArenaCurrency(uint32 value) { m_arena += value); }
+		uint32 GetArenaCurrency() { return m_arena; }
 
 		void SetGlyph(uint32 slot, uint32 id) { SetUInt32Value(PLAYER_FIELD_GLYPHS_1 + slot, id); }
 		uint32 GetGlyph(uint32 slot) { return GetUInt32Value(PLAYER_FIELD_GLYPHS_1 + slot); }

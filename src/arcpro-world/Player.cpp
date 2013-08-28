@@ -24,7 +24,7 @@ UpdateMask Player::m_visibleUpdateMask;
 #define COLLISION_INDOOR_CHECK_INTERVAL 1000
 #define CANNON 24933 //39692, 34154
 #define MORTAR 25003 //33861 -- Triggers Explosion, 39695 --- Summons Mortar
-#define NITROUS 27746 //Needs Scripting
+#define NITROUS 27746 // Needs Scripting
 #define FLAMETHROWER 39693 //25027
 #define MACHINEGUN 25026
 #define DROPMINE 25024
@@ -43,19 +43,36 @@ static const uint8 glyphMask[81] =
 	63 //lvl 80, 3 Minor 3 Major
 };
 
-static const float crit_to_dodge[ MAX_PLAYER_CLASSES ] = {
-	0.0f,      // empty
+static const float crit_to_dodge[MAX_PLAYER_CLASSES] = 
+{
+	0.0f,      // Empty
 	1.1f,      // Warrior
 	1.0f,      // Paladin
 	1.6f,      // Hunter
 	2.0f,      // Rogue
 	1.0f,      // Priest
-	1.0f,      // DK?
+	1.0f,      // Death Knight?
 	1.0f,      // Shaman
 	1.0f,      // Mage
 	1.0f,      // Warlock
 	0.0f,      // empty
 	1.7f       // Druid
+};
+
+uint32 const MasterySpells[MAX_CLASSES] =
+{
+        0,
+    87500,  // Warrior
+    87494,  // Paladin
+    87493,  // Hunter
+    87496,  // Rogue
+    87495,  // Priest
+    87492,  // Death Knight
+    87497,  // Shaman
+    86467,  // Mage
+    87498,  // Warlock
+        0,
+    87491,  // Druid
 };
 
 Player::Player(uint32 guid)
@@ -197,7 +214,9 @@ Player::Player(uint32 guid)
 	m_session(NULL),
 	m_GroupInviter(0),
 	m_SummonedObject(NULL),
-	myCorpseLocation()
+	myCorpseLocation(),
+	ammoId(0),
+	m_PlayerGuildId(0)
 #ifdef ENABLE_ACHIEVEMENTS
 	, m_achievementMgr(this)
 #endif
@@ -662,10 +681,10 @@ bool Player::Create(WorldPacket & data)
 	info = objmgr.GetPlayerCreateInfo(race, class_);
 	if(!info)
 	{
-		// info not found... disconnect
+		// Info not found... disconnect
 		//sCheatLog.writefromsession(m_session, "tried to create invalid player with race %u and class %u", race, class_);
 		m_session->Disconnect();
-		// don't use Log.LargeErrorMessage() here, it doesn't handle %s %u in the string.
+		// Don't use Log.LargeErrorMessage() here, it doesn't handle %s %u in the string.
 		if(class_ == DEATHKNIGHT)
 			LOG_ERROR("Account Name: %s tried to create a deathknight, however your playercreateinfo table does not support this class, please update your database.", m_session->GetAccountName().c_str());
 		else
@@ -673,14 +692,28 @@ bool Player::Create(WorldPacket & data)
 		return false;
 	}
 
-	// check that the account can create TBC characters, if we're making some
+	// Check that the account can create TBC characters, if we're making some
 	if( race >= RACE_BLOODELF && !(m_session->_accountFlags & ACCOUNT_FLAG_XPACK_01) )
 	{
 		m_session->Disconnect();
 		return false;
 	}
+
+	// Check that the account can create CATA characters, if we're making some
+	if( race >= RACE_WORGEN or RACE_GOBLIN && !(m_session->_accountFlags & ACCOUNT_FLAG_XPACK_03) )
+	{
+		m_session->Disconnect();
+		return false;
+	}
+
+/*	// Check that the account can create MOP characters, if we're making some
+	if( race >= RACE_PANDAREN && !(m_session->_accountFlags & ACCOUNT_FLAG_XPACK_04) )
+	{
+		m_session->Disconnect();
+		return false;
+	}*/
 	
-	// check that the account can create deathknights, if we're making one
+	// Check that the account can create Death knights, if we're making one
 	if( class_ == DEATHKNIGHT && !(m_session->_accountFlags & ACCOUNT_FLAG_XPACK_02) )
 	{
 		m_session->Disconnect();
@@ -723,7 +756,7 @@ bool Player::Create(WorldPacket & data)
 	memcpy(m_taximask, info->taximask, sizeof(m_taximask));
 
 	// Set Starting stats for char
-	//SetScale(  ((race==RACE_TAUREN)?1.3f:1.0f));
+//	SetScale(  ((race==RACE_TAUREN)?1.3f:1.0f));
 	SetScale(1.0f);
 	SetHealth(info->health);
 	SetPower(POWER_TYPE_MANA, info->mana);
@@ -746,7 +779,7 @@ bool Player::Create(WorldPacket & data)
 	SetFaction(info->factiontemplate);
 
 	if(class_ == DEATHKNIGHT)
-		SetTalentPointsForAllSpec(sWorld.DKStartTalentPoints); // Default is 0 in case you do not want to modify it
+		SetTalentPointsForAllSpec(sWorld.DKStartTalentPoints); // Default is 0 in case you do not want to modify it through config
 	else
 		SetTalentPointsForAllSpec(0);
 	if(class_ != DEATHKNIGHT || sWorld.StartingLevel > 55)
@@ -873,7 +906,6 @@ bool Player::Create(WorldPacket & data)
 	load_mana = GetPower(POWER_TYPE_MANA);
 	return true;
 }
-
 
 void Player::Update(uint32 p_time)
 {
@@ -1787,7 +1819,7 @@ void Player::ActivateSpec(uint8 spec)
 
 		addSpell(talentInfo->RankID[itr->second]);
 	}
-	SetUInt32Value(PLAYER_CHARACTER_POINTS1, m_specs[ m_talentActiveSpec ].GetTP() );
+//	SetUInt32Value(PLAYER_CHARACTER_POINTS1, m_specs[ m_talentActiveSpec ].GetTP() );
 	smsg_TalentsInfo(false);
 }
 
@@ -2235,7 +2267,7 @@ void Player::InitVisibleUpdateBits()
 	Player::m_visibleUpdateMask.SetBit(PLAYER_DUEL_TEAM);
 	Player::m_visibleUpdateMask.SetBit(PLAYER_DUEL_ARBITER);
 	Player::m_visibleUpdateMask.SetBit(PLAYER_DUEL_ARBITER + 1);
-	Player::m_visibleUpdateMask.SetBit(PLAYER_GUILDID);
+//	Player::m_visibleUpdateMask.SetBit(PLAYER_GUILDID);
 	Player::m_visibleUpdateMask.SetBit(PLAYER_GUILDRANK);
 	Player::m_visibleUpdateMask.SetBit(UNIT_FIELD_BASE_MANA);
 	Player::m_visibleUpdateMask.SetBit(UNIT_FIELD_BYTES_2);
@@ -2353,7 +2385,7 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 	if((getClass() == MAGE) || (getClass() == PRIEST) || (getClass() == WARLOCK))
 		ss << (uint32)0 << ","; // make sure ammo slot is 0 for these classes, otherwise it can mess up wand shoot
 	else
-		ss << m_uint32Values[PLAYER_AMMO_ID] << ",";
+		ss << ammoId << ",";
 	ss << GetPrimaryProfessionPoints() << ",";
 
 	ss << load_health << ","
@@ -2674,7 +2706,7 @@ void Player::RemovePendingPlayer()
 {
 	if(m_session)
 	{
-		uint8 respons = E_CHAR_LOGIN_NO_CHARACTER;
+		uint8 respons = CHAR_LOGIN_NO_CHARACTER;
 		m_session->OutPacket(SMSG_CHARACTER_LOGIN_FAILED, 1, &respons);
 		m_session->m_loggingInPlayer = NULL;
 	}
@@ -2904,8 +2936,8 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 	SetUInt64Value(PLAYER__FIELD_KNOWN_TITLES1, get_next_field.GetUInt64());
 	SetUInt64Value(PLAYER__FIELD_KNOWN_TITLES2, get_next_field.GetUInt64());
 	m_uint32Values[ PLAYER_FIELD_COINAGE ]					= get_next_field.GetUInt32();
-	m_uint32Values[ PLAYER_AMMO_ID ]						= get_next_field.GetUInt32();
-	m_uint32Values[ PLAYER_CHARACTER_POINTS2 ]				= get_next_field.GetUInt32();
+	ammoId						= get_next_field.GetUInt32();
+	m_uint32Values[ PLAYER_CHARACTER_POINTS ]				= get_next_field.GetUInt32();
 	load_health												= get_next_field.GetUInt32();
 	load_mana												= get_next_field.GetUInt32();
 	SetHealth(load_health);
@@ -3279,7 +3311,7 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 		m_specs[SPEC_SECONDARY].SetTP( tp2 );
 		m_specs[SPEC_PRIMARY].ActiveTree = active1;
 		m_specs[SPEC_SECONDARY].ActiveTree = active2;
-		SetUInt32Value( PLAYER_CHARACTER_POINTS1, m_specs[ m_talentActiveSpec ].GetTP() );
+//		SetUInt32Value( PLAYER_CHARACTER_POINTS1, m_specs[ m_talentActiveSpec ].GetTP() );
 	}
 
 	m_phase = get_next_field.GetUInt32(); //Load the player's last phase
@@ -4453,7 +4485,7 @@ void Player::SetSpeeds( uint8 type, float speed )
 				m_lastBackSwimSpeed = speed;
 			}
 			break;
-		case FLY:
+/*		case FLY:
 			{
 				if(speed == m_lastFlySpeed)
 					return;
@@ -4462,7 +4494,7 @@ void Player::SetSpeeds( uint8 type, float speed )
 				m_flySpeed = speed;
 				m_lastFlySpeed = speed;
 			}
-			break;
+			break;*/
 		default:
 			return;
 	}
@@ -4472,9 +4504,9 @@ void Player::SetSpeeds( uint8 type, float speed )
 
 void Player::BuildPlayerRepop()
 {
-	WorldPacket data(SMSG_PRE_RESURRECT, 8);
+/*	WorldPacket data(SMSG_PRE_RESURRECT, 8);
 	FastGUIDPack(data, GetGUID());		 // caster guid
-	GetSession()->SendPacket(&data);
+	GetSession()->SendPacket(&data);*/
 
 	// Cleanup first
 	uint32 AuraIds[] = {20584, 9036, 8326, 0};
@@ -4602,12 +4634,12 @@ void Player::RepopRequestedPlayer()
 		}
 
 		/* Send Spirit Healer Location */
-		WorldPacket data(SMSG_DEATH_RELEASE_LOC, 16);
+		/*WorldPacket data(SMSG_DEATH_RELEASE_LOC, 16);
 
 		data << m_mapId;
 		data << m_position;
 
-		m_session->SendPacket(&data);
+		m_session->SendPacket(&data);*/
 
 		/* Corpse reclaim delay */
 		WorldPacket data2(SMSG_CORPSE_RECLAIM_DELAY, 4);
@@ -8563,16 +8595,7 @@ void Player::SafeTeleport(MapMgr* mgr, const LocationVector & vec)
 
 void Player::SetGuildId(uint32 guildId)
 {
-	if(IsInWorld())
-	{
-		const uint32 field = PLAYER_GUILDID;
-		sEventMgr.AddEvent(TO_OBJECT(this), &Object::SetUInt32Value, field, guildId, EVENT_PLAYER_SEND_PACKET, 1,
-		                   1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
-	}
-	else
-	{
-		SetUInt32Value(PLAYER_GUILDID, guildId);
-	}
+	m_PlayerGuildId = guildId
 }
 
 void Player::SetGuildRank(uint32 guildRank)
@@ -9819,7 +9842,7 @@ void Player::AddComboPoints(uint64 target, int8 count)
 
 void Player::UpdateComboPoints()
 {
-	// fuck bytebuffers :D
+/*	// fuck bytebuffers :D
 	unsigned char buffer[10];
 	uint16 c = 2;
 
@@ -9846,7 +9869,7 @@ void Player::UpdateComboPoints()
 	else
 		buffer[0] = buffer[1] = 0;
 
-	m_session->OutPacket(SMSG_UPDATE_COMBO_POINTS, c, buffer);
+	m_session->OutPacket(SMSG_UPDATE_COMBO_POINTS, c, buffer);*/
 }
 
 void Player::SendAreaTriggerMessage(const char* message, ...)
@@ -10164,7 +10187,7 @@ void Player::_UpdateSkillFields()
 			continue;
 		}
 
-		ARCPRO_ASSERT(f <= PLAYER_CHARACTER_POINTS1);
+		ARCPRO_ASSERT(f <= PLAYER_CHARACTER_POINTS);
 		if(itr->second.Skill->type == SKILL_TYPE_PROFESSION)
 		{
 			SetUInt32Value(f++, itr->first | 0x10000);
@@ -10186,7 +10209,7 @@ void Player::_UpdateSkillFields()
 	}
 
 	/* Null out the rest of the fields */
-	for(; f < PLAYER_CHARACTER_POINTS1; ++f)
+	for(; f < PLAYER_CHARACTER_POINTS; ++f)
 	{
 		if(m_uint32Values[f] != 0)
 			SetUInt32Value(f, 0);
@@ -11840,11 +11863,11 @@ void Player::SendAllAchievementEarned()
 
 void Player::UpdatePowerAmm()
 {
-	WorldPacket data(SMSG_POWER_UPDATE, 5);
+/*	WorldPacket data(SMSG_POWER_UPDATE, 5);
 	FastGUIDPack(data, GetGUID());
 	data << uint8(GetPowerType());
 	data << GetUInt32Value(UNIT_FIELD_POWER1 + GetPowerType());
-	SendMessageToSet(&data, true);
+	SendMessageToSet(&data, true);*/
 }
 // Initialize Glyphs or update them after level change
 void Player::UpdateGlyphs()
@@ -11900,15 +11923,15 @@ void Player::SetKnownTitle(RankTitles title, bool set)
 	else
 		SetUInt64Value(PLAYER__FIELD_KNOWN_TITLES + ((title >> 6) << 1), current & ~uint64(1) << (title % 64));
 
-	WorldPacket data(SMSG_TITLE_EARNED, 8);
+/*	WorldPacket data(SMSG_TITLE_EARNED, 8);
 	data << uint32(title) << uint32(set ? 1 : 0);
-	m_session->SendPacket(&data);
+	m_session->SendPacket(&data);*/
 }
 
 void Player::SendTriggerMovie(uint32 movieID)
 {
-	if(m_session)
-		m_session->OutPacket(SMSG_TRIGGER_MOVIE, 4, &movieID);
+//	if(m_session)
+//		m_session->OutPacket(SMSG_TRIGGER_MOVIE, 4, &movieID);
 }
 
 uint32 Player::GetInitialFactionId()
@@ -11966,7 +11989,7 @@ void Player::CalcExpertise()
 
 void Player::UpdateKnownCurrencies(uint32 itemId, bool apply)
 {
-	if(CurrencyTypesEntry const* ctEntry = dbcCurrencyTypesStore.LookupEntryForced(itemId))
+/*	if(CurrencyTypesEntry const* ctEntry = dbcCurrencyTypesStore.LookupEntryForced(itemId))
 	{
 		if(apply)
 		{
@@ -11980,7 +12003,7 @@ void Player::UpdateKnownCurrencies(uint32 itemId, bool apply)
 			uint64 newval = oldval & ~(((uint32)1) << (ctEntry->BitIndex - 1));
 			SetUInt64Value(PLAYER_FIELD_KNOWN_CURRENCIES, newval);
 		}
-	}
+	}*/
 }
 
 void Player::RemoveItemByGuid(uint64 GUID)
