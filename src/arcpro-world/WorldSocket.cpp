@@ -36,8 +36,22 @@ struct ClientPktHeader
 
 struct ServerPktHeader
 {
-	uint16 size;
-	uint16 cmd;
+	ServerPktHeader(uint32 _size, uint16 _cmd) : size(_size)
+	{
+		headerLength = 0;
+		if (size > 0x7FFF)
+			header[headerLength++] = 0x80 | (0xFF & (_size >> 16));
+			header[headerLength++] = 0xFF & (_size >> 8);
+			header[headerLength++] = 0xFF & _size;
+			header[headerLength++] = 0xFF & _cmd;
+			header[headerLength++] = 0xFF & (_cmd >> 8);
+	}
+	
+	uint8 getHeaderLength() { return headerLenth; }
+	bool isLargePacket() { return ((headerLength == 4) ? true : false); }
+	const uint32 size;
+	uint8 header[5];
+	uint8 headerLength;
 };
 #pragma pack(pop)
 
@@ -51,7 +65,7 @@ WorldSocket::WorldSocket(SOCKET fd)
 	mSeed(RandomUInt()),
 	mRequestID(0),
 	mSession(NULL),
-	pAuthenticationPacket(NULL),
+	packetAddon(NULL),
 	_latency(0),
 	mQueued(false),
 	m_nagleEanbled(false),
@@ -70,8 +84,8 @@ WorldSocket::~WorldSocket()
 	}
 	queueLock.Release();
 
-	if(pAuthenticationPacket)
-		delete pAuthenticationPacket;
+	if(packetAddon)
+		delete packetAddon;
 
 	if(mSession)
 	{
@@ -102,12 +116,12 @@ void WorldSocket::OnDisconnect()
 
 	if(mQueued)
 	{
-		sWorld.RemoveQueuedSocket(this);	// Remove from queued sockets.
+		sWorld.RemoveQueuedSocket(this); // Remove from queued sockets.
 		mQueued = false;
 	}
 }
 
-void WorldSocket::OutPacket(uint16 opcode, size_t len, const void* data)
+void WorldSocket::OutPacket(uint32 opcode, size_t len, const void* data)
 {
 	OUTPACKET_RESULT res;
 	if((len + 10) > WORLDSOCKET_SENDBUF_SIZE)
@@ -177,7 +191,7 @@ void WorldSocket::UpdateQueuedPackets()
 	queueLock.Release();
 }
 
-OUTPACKET_RESULT WorldSocket::_OutPacket(uint16 opcode, size_t len, const void* data)
+OUTPACKET_RESULT WorldSocket::_OutPacket(uint32 opcode, size_t len, const void* data)
 {
 	bool rv;
 	if(!IsConnected())
@@ -197,15 +211,11 @@ OUTPACKET_RESULT WorldSocket::_OutPacket(uint16 opcode, size_t len, const void* 
 
 	// Encrypt the packet
 	// First, create the header.
-	ServerPktHeader Header;
-
-	Header.cmd = opcode;
-	Header.size = ntohs((uint16)len + 2);
-
-	_crypt.EncryptSend((uint8*)&Header, sizeof(ServerPktHeader));
+	ServerPktHeader Header(uint32(len + 2), opcode);
+	_crypt.EncryptSend(((uint8*)Header.header), Header.getHeaderLength());
 
 	// Pass the header to our send buffer
-	rv = BurstSend((const uint8*)&Header, 4);
+	rv = BurstSend((const uint8*)&Header.header, Header.getHeaderLength());
 
 	// Pass the rest of the packet to our send buffer (if there is any)
 	if(len > 0 && rv)
@@ -223,39 +233,58 @@ void WorldSocket::OnConnect()
 	sWorld.mAcceptedConnections++;
 	_latency = getMSTime();
 
-	WorldPacket wp(SMSG_AUTH_CHALLENGE, 24);
-
-	wp << uint32(1);
-	wp << uint32(mSeed);
-	wp << uint32(0xC0FFEEEE);
-	wp << uint32(0x00BABE00);
-	wp << uint32(0xDF1697E5);
-	wp << uint32(0x1234ABCD);
+	WorldPAcket wp(SMSG_AUTH_CHALLENGE, 37);
+	wp.append(sWorld.AccountSeed1.AsByteArray(), 16);
+	wp << uint8(1); // Unk
+	wp << mSeed;
+	wp.append(sWorld.AccountSeed2.AsBytearray(), 16;
 
 	SendPacket(&wp);
-
 }
 
 void WorldSocket::_HandleAuthSession(WorldPacket* recvPacket)
 {
+	uint32 AddonSize = 0;
 	std::string account;
-	uint32 unk2, unk3;
-	uint64 unk4;
-	uint32 unk5, unk6, unk7;
-
 	_latency = getMSTime() - _latency;
 
 	try
 	{
-		*recvPacket >> mClientBuild;
-		*recvPacket >> unk2;
-		*recvPacket >> account;
-		*recvPacket >> unk3;
+		*recvPacket >> AuthDigest[14];
+		*recvPacket >> AuthDigest[7];
+		*recvPacket >> AuthDigest[16];
+		*recvPacket >> AuthDigest[9];
+		*recvPacket >> AuthDigest[4];
+		*recvPacket >> AuthDigest[5];
+		*recvPacket >> AuthDigest[15];
+		recvPacket->read_skip<uint32>();
+		*recvPacket >> AuthDigest[18];
+		recvPacket->read_skip<uint32>();
+		recvPacket->read_skip<uint64>();
+		*recvPacket >> AuthDigest[13];
+		recvPacket->read_skip<uint8>();
+		*recvPacket >> AuthDigest[10];
+		*recvPacket >> AuthDigest[6];
 		*recvPacket >> mClientSeed;
-		*recvPacket >> unk4;
-		*recvPacket >> unk5;
-		*recvPacket >> unk6;
-		*recvPacket >> unk7;
+		recvPacket->read_skip<uint8>();
+		*recvPacket >> AuthDigest[19];
+		*recvPacket >> AuthDigest[11];
+		*recvPacket >> AuthDigest[17];
+		*recvPacket >> AuthDigest[8];
+		*recvPacket >> AuthDigest[12];
+		*recvPacket >> AuthDigest[0];
+		mClientBuild = recvPacket->read_skip<uint16>();
+		*recvPacket >> AuthDigest[3];
+		recvPacket->read_skip<uint8>();
+		recvPacket->read_skip<uint32>();
+		*recvPacket >> AuthDigest[1];
+		*recvPacket >> AuthDigest[2];
+		*recvPacket >> AddonSize;
+		
+		packetaddon = new WorldPacket(SMSG_ADDON_INFO, 4);
+		for(uint32 i = 0; i < AddonSize; i++)
+			*packetAddon << recvPacket->read<uint8>();
+		*recvPacket >> account;
 	}
 	catch(ByteBuffer::error &)
 	{
@@ -265,7 +294,6 @@ void WorldSocket::_HandleAuthSession(WorldPacket* recvPacket)
 
 	// Send out a request for this account.
 	mRequestID = sLogonCommHandler.ClientConnected(account, this);
-
 	if(mRequestID == 0xFFFFFFFF)
 	{
 		Disconnect();
@@ -274,9 +302,6 @@ void WorldSocket::_HandleAuthSession(WorldPacket* recvPacket)
 
 	// shitty hash !
 	m_fullAccountName = new string(account);
-
-	// Set the authentication packet
-	pAuthenticationPacket = recvPacket;
 }
 
 void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 requestid)
@@ -287,10 +312,10 @@ void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 req
 	uint32 error;
 	recvData >> error;
 
-	if(error != 0 || pAuthenticationPacket == NULL)
+	if(error != 0 || packetAddon == NULL)
 	{
-		// something happened wrong @ the logon server
-		OutPacket(SMSG_AUTH_RESPONSE, 1, "\x0D");
+		// Something happened/wrong @ the logon server
+		BuildAuthenticationResponse(AUTH_FAILED);
 		return;
 	}
 
@@ -336,14 +361,11 @@ void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 req
 		// we must send authentication failed here.
 		// the stupid newb can relog his client.
 		// otherwise accounts dupe up and disasters happen.
-		OutPacket(SMSG_AUTH_RESPONSE, 1, "\x15");
+		BuildAuthenticationResponse(AUTH_ALREADY_LOGGING_IN);
 		return;
 	}
 
 	Sha1Hash sha;
-
-	uint8 digest[20];
-	pAuthenticationPacket->read(digest, 20);
 
 	uint32 t = 0;
 	if(m_fullAccountName == NULL)				// should never happen !
@@ -363,10 +385,9 @@ void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 req
 	sha.UpdateData((uint8*)&K, 40);
 	sha.Finalize();
 
-	if(memcmp(sha.GetDigest(), digest, 20))
+	if(memcmp(sha.GetDigest(), AuthDigest, 20))
 	{
-		// AUTH_UNKNOWN_ACCOUNT = 21
-		OutPacket(SMSG_AUTH_RESPONSE, 1, "\x15");
+		BuildAuthenticationResponse(AUTH_UNKNOWN_ACCOUNT);
 		return;
 	}
 
@@ -420,7 +441,7 @@ void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 req
 #ifdef SESSION_CAP
 	if(sWorld.GetSessionCount() >= SESSION_CAP)
 	{
-		OutPacket(SMSG_AUTH_RESPONSE, 1, "\x0D");
+		BuildAuthenticationResponse(AUTH_UNAVAILABLE);
 		Disconnect();
 		return;
 	}
@@ -444,7 +465,7 @@ void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 req
 	}
 	else
 	{
-		OutPacket(SMSG_AUTH_RESPONSE, 1, "\x0E"); // AUTH_REJECT = 14
+		BuildAuthenticationResponse(AUTH_UNAVAILABLE);
 		Disconnect();
 	}
 
@@ -454,42 +475,66 @@ void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 req
 
 void WorldSocket::Authenticate()
 {
-	ARCPRO_ASSERT(pAuthenticationPacket != NULL);
+	ARCPRO_ASSERT(packetAddon != NULL);
 	mQueued = false;
 
 	if(mSession == NULL)
 		return;
 
-	if(mSession->HasFlag(ACCOUNT_FLAG_XPACK_02))
-		OutPacket(SMSG_AUTH_RESPONSE, 11, "\x0C\x30\x78\x00\x00\x00\x00\x00\x00\x00\x02");
-	else if(mSession->HasFlag(ACCOUNT_FLAG_XPACK_01))
-		OutPacket(SMSG_AUTH_RESPONSE, 11, "\x0C\x30\x78\x00\x00\x00\x00\x00\x00\x00\x01");
-	else
-		OutPacket(SMSG_AUTH_RESPONSE, 11, "\x0C\x30\x78\x00\x00\x00\x00\x00\x00\x00\x00");
+	BuildauthenticationResponse(AUTH_OK);
+	
+	WorldPacket data(SMSG_CLIENTCACHE_VERSION, 4);
+	data << uint32(15595)
+	SendPacket(&data);
+	
+	WorldPacket datatt(SMSG_TUTORIAL_FLAGS, 4 * 8);
+	for(uint32 i = 0; i <8; ++i)
+		datatt << uint32(0);
+	SendPacket(&datatt);
+	
+	try
+	{
+		sAddonMgr.SendAddonInfoPacket(packetAddon, mSession);
+	}
+	catch(ByteBuffer::error&)
+	{
+		DEBUG_LOG("Warning: Incomplete auth session sent.");
+	}
 
-	sAddonMgr.SendAddonInfoPacket(pAuthenticationPacket, static_cast< uint32 >(pAuthenticationPacket->rpos()), mSession);
 	mSession->_latency = _latency;
 
-	delete pAuthenticationPacket;
-	pAuthenticationPacket = NULL;
+	delete packetAddon;
+	packetAddon = NULL;
 
 	sWorld.AddSession(mSession);
 	sWorld.AddGlobalSession(mSession);
 
 	if(mSession->HasGMPermissions())
 		sWorld.gmList.insert(mSession);
+}
 
+void WorldSocket::BuildAuthenticationResponse(uint8 code, bool isQueue, uint32 queuePos)
+{
+	WorldPacket data(SMSG_AUTH_RESPONSE, (isQueue ? 17 : 12 ));
+	data << uint8(code);
+	data << uint32(0); // Billing time remaining
+	data << uint8(0); // Billing plan flags
+	data << uint32(0); // Billing time rested
+	data << uint8(3); // Expansion
+	data << uint8(3); // Expansion
+	
+	if( isQueue )
+	{
+		data << uint32(queuePos);
+		data << uint(0); // Unknown
+	}
+	
+	SendPacket(&data);
 }
 
 void WorldSocket::UpdateQueuePosition(uint32 Position)
 {
-// cebernic: Displays re-correctly until 2.4.3,there will not be always 0
-	WorldPacket QueuePacket(SMSG_AUTH_RESPONSE, 16);
-	QueuePacket << uint8(0x1B) << uint8(0x2C) << uint8(0x73) << uint8(0) << uint8(0);
-	QueuePacket << uint32(0) << uint8(0);// << uint8(0);
-	QueuePacket << Position;
-//	QueuePacket << uint8(1);
-	SendPacket(&QueuePacket);
+	BuildauthenticationResponse(AUTH_WAIT_QUEUE, true, Position);
 }
 
 void WorldSocket::_HandlePing(WorldPacket* recvPacket)
@@ -573,46 +618,40 @@ void WorldSocket::OnRead()
 			}
 		}
 
-		Packet = new WorldPacket(static_cast<uint16>(mOpcode), mSize);
+		Packet = new WorldPacket(mOpcode, mSize);
 		Packet->resize(mSize);
 
 		if(mRemaining > 0)
 		{
 			// Copy from packet buffer into our actual buffer.
-			///Read(mRemaining, (uint8*)Packet->contents());
 			readBuffer.Read((uint8*)Packet->contents(), mRemaining);
 		}
 
-		sWorldLog.LogPacket(mSize, static_cast<uint16>(mOpcode), mSize ? Packet->contents() : NULL, 0, (mSession ? mSession->GetAccountId() : 0));
+		sWorldLog.LogPacket(mSize, mOpcode, mSize ? Packet->contents() : NULL, 0, (mSession ? mSession->GetAccountId() : 0));
 		mRemaining = mSize = mOpcode = 0;
 
 		// Check for packets that we handle
 		switch(Packet->GetOpcode())
 		{
 			case CMSG_PING:
-				{
-					_HandlePing(Packet);
-					delete Packet;
-				}
-				break;
+			{
+				_HandlePing(Packet);
+				delete Packet;
+			}break;
 			case CMSG_AUTH_SESSION:
-				{
-					_HandleAuthSession(Packet);
-				}
-				break;
+			{
+				_HandleAuthSession(Packet);
+			}break;
 			default:
-				{
-					if(mSession) mSession->QueuePacket(Packet);
-					else delete Packet;
-				}
-				break;
+			{
+				if(mSession) mSession->QueuePacket(Packet);
+				else delete Packet;
+			}break;
 		}
 	}
 }
 
-
-
-void WorldLog::LogPacket(uint32 len, uint16 opcode, const uint8* data, uint8 direction, uint32 accountid)
+void WorldLog::LogPacket(uint32 len, uint32 opcode, const uint8* data, uint8 direction, uint32 accountid)
 {
 #ifdef ECHO_PACKET_LOG_TO_CONSOLE
 	sLog.outString("[%s]: %s %s (0x%03X) of %u bytes.", direction ? "SERVER" : "CLIENT", direction ? "sent" : "received",

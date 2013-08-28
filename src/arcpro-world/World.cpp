@@ -71,6 +71,9 @@ World::World()
 
 	SocketSendBufSize = WORLDSOCKET_SENDBUF_SIZE;
 	SocketRecvBufSize = WORLDSOCKET_RECVBUF_SIZE;
+	
+	AccountSeed1.SetRand(128);
+	AccountSeed2.SetRand(128);
 
 	m_levelCap = PLAYER_LEVEL_CAP;
 	m_genLevelCap = PLAYER_LEVEL_CAP;
@@ -1374,6 +1377,8 @@ void World::Rehash(bool load)
 
 	antiMasterLootNinja = Config.OptionalConfig.GetBoolDefault("Optional", "AntiMasterLootNinja", false);
 	realmAllowTBCcharacters = Config.OptionalConfig.GetBoolDefault("Optional", "AllowTBC", true);
+	realmAllowWrathcharacters = Config.OptionalConfig.GetBoolDefault("Optional", "AllowWrath", true);
+	realmAllowCatacharacters = Config.OptionalConfig.GetBoolDefault("Optional", "AllowCata", true);
 
 	Arena_Season = Config.MainConfig.GetIntDefault("Arena", "Season", 1);
 	Arena_Progress = Config.MainConfig.GetIntDefault("Arena", "Progress", 1);

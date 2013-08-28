@@ -50,12 +50,13 @@ class SERVER_DECL WorldSocket : public Socket
 		ARCPRO_INLINE void SendPacket(WorldPacket* packet) { if(!packet) return; OutPacket(packet->GetOpcode(), packet->size(), (packet->size() ? (const void*)packet->contents() : NULL)); }
 		ARCPRO_INLINE void SendPacket(StackBufferBase* packet) { if(!packet) return; OutPacket(packet->GetOpcode(), packet->GetSize(), (packet->GetSize() ? (const void*)packet->GetBufferPointer() : NULL)); }
 
-		void  OutPacket(uint16 opcode, size_t len, const void* data);
-		OUTPACKET_RESULT  _OutPacket(uint16 opcode, size_t len, const void* data);
+		void  OutPacket(uint32 opcode, size_t len, const void* data);
+		OUTPACKET_RESULT  _OutPacket(uint32 opcode, size_t len, const void* data);
 
 		ARCPRO_INLINE uint32 GetLatency() { return _latency; }
 
 		void Authenticate();
+		void BuildAuthenticationResponse(uint8 code, bool isQueue = false, uint32 queuePos = 0);
 		void InformationRetreiveCallback(WorldPacket & recvData, uint32 requestid);
 
 		void  UpdateQueuePosition(uint32 Position);
@@ -86,17 +87,17 @@ class SERVER_DECL WorldSocket : public Socket
 		uint32 mRequestID;
 
 		WorldSession* mSession;
-		WorldPacket* pAuthenticationPacket;
 		FastQueue<WorldPacket*, DummyLock> _queue;
 		Mutex queueLock;
 
+		uint8 AuthDigest[20];
+		WorldPacket* packetAddon;
 		WowCrypt _crypt;
 		uint32 _latency;
 		bool mQueued;
 		bool m_nagleEanbled;
 		string* m_fullAccountName;
 };
-
 
 static inline void FastGUIDPack(ByteBuffer & buf, const uint64 & oldguid)
 {
@@ -160,8 +161,8 @@ static inline void FastGUIDPack(ByteBuffer & buf, const uint64 & oldguid)
 	buf.append(guidfields, j);
 }
 
-//!!! warning. This presumes that all guids can be compressed at least 1 byte
-//make sure you choose highguids accordingly
+//!!! Warning. This presumes that all guids can be compressed at least 1 byte
+// Make sure you choose highguids accordingly
 static inline unsigned int FastGUIDPack(const uint64 & oldguid, unsigned char* buffer, uint32 pos)
 {
 	// hehe speed freaks

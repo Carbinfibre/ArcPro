@@ -20,7 +20,8 @@
 
 #include "StdAfx.h"
 
-void WorldStatesHandler::SetWorldStateForZone( uint32 zone, uint32 area, uint32 field, uint32 value ){
+void WorldStatesHandler::SetWorldStateForZone( uint32 zone, uint32 area, uint32 field, uint32 value )
+{
 	HM_NAMESPACE::hash_map< uint32, HM_NAMESPACE::hash_map< uint32, uint32 > >::iterator itr
 		= worldstates.find( zone );
 
@@ -77,7 +78,8 @@ void WorldStatesHandler::BuildInitWorldStatesForZone( uint32 zone, uint32 area, 
 	data << uint32( sWorld.Arena_Progress );
 }
 
-void WorldStatesHandler::InitWorldStates( std::multimap< uint32,WorldState > *states ){
+void WorldStatesHandler::InitWorldStates( std::multimap< uint32,WorldState > *states )
+{
 	if( states == NULL )
 		return;
 
@@ -87,3 +89,4 @@ void WorldStatesHandler::InitWorldStates( std::multimap< uint32,WorldState > *st
 		worldstates[ zone ].insert( std::pair< uint32, uint32 >( itr->second.field, itr->second.value ) );
 	}
 }
+

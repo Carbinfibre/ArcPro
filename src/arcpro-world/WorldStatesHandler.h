@@ -39,7 +39,6 @@ class SERVER_DECL WorldStatesHandler{
 
 		~WorldStatesHandler(){}
 
-
 		////////////////////////////////////////////////////////////////////////////////////////////
 		//void SetWorldStateForZone( uint32 zone, uint32 area, uint32 field, uint32 value )
 		//  Sets the specified worldstate's value for the specified zone
@@ -56,7 +55,6 @@ class SERVER_DECL WorldStatesHandler{
 		//
 		////////////////////////////////////////////////////////////////////////////////////////////
 		void SetWorldStateForZone( uint32 zone, uint32 area, uint32 field, uint32 value );
-
 
 		////////////////////////////////////////////////////////////////////////////////////////////
 		//uint32 GetWorldStateForZone( uint32 zone, uint32 area, uint32 field ) const;
@@ -75,7 +73,6 @@ class SERVER_DECL WorldStatesHandler{
 		////////////////////////////////////////////////////////////////////////////////////////////
 		uint32 GetWorldStateForZone( uint32 zone, uint32 area, uint32 field ) const;
 
-
 		////////////////////////////////////////////////////////////////////////////////////////////
 		//void BuildInitWorldStatesForZone( uint32 zone, uint32 area, WorldPacket &data ) const;
 		//  Builds the initial worldstates packet, that tells the client what worldstates exist
@@ -91,7 +88,6 @@ class SERVER_DECL WorldStatesHandler{
 		//
 		////////////////////////////////////////////////////////////////////////////////////////////
 		void BuildInitWorldStatesForZone( uint32 zone, uint32 area, WorldPacket &data ) const;
-
 
 		////////////////////////////////////////////////////////////////////////////////////////////
 		//void InitWorldStates( std::multimap< uint32, WorldState > *states );
